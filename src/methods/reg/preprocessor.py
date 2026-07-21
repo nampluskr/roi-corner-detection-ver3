@@ -1,0 +1,10 @@
+# src/methods/reg/preprocessor.py: convert standard corners into reg regression targets
+
+from src.methods.base.preprocessor import BasePreprocessor
+
+
+class RegPreprocessor(BasePreprocessor):
+    """Flattens (N, 4, 2) normalized corners into (N, 8) targets with no value transform."""
+
+    def __call__(self, corners):
+        return corners.reshape(corners.shape[0], 8)

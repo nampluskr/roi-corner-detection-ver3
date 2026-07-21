@@ -20,7 +20,7 @@ DEFAULTS = dict(
     image_size=224,
     batch_size=4,
     max_epochs=5,
-    patience=2,
+    patience=3,
     warmup_epochs=1,
     num_workers=4,
     train_size=2000,    # None: all train samples
@@ -73,7 +73,8 @@ def get_wrapper_kwargs(args):
         kwargs["head"] = args.head
     if getattr(args, "model", None):
         kwargs["model"] = args.model
-    if getattr(args, "method", None) in ("reg", "seg", "det", "heatmap") and getattr(args, "warmup_epochs", None) is not None:
+    warmup_methods = ("reg", "seg", "det", "heatmap", "torchseg", "torchdet", "yolo", "detr")
+    if getattr(args, "method", None) in warmup_methods and getattr(args, "warmup_epochs", None) is not None:
         kwargs["warmup_epochs"] = args.warmup_epochs
     return kwargs
 

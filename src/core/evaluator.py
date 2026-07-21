@@ -5,9 +5,9 @@ import os
 
 from tqdm import tqdm
 
-from src.metrics.corner_distance import MeanCornerDistance, MaxCornerDistance, PCK
-from src.metrics.polygon_iou import PolygonIoU
-from src.metrics.success_rate import SuccessRate
+from src.components.metrics import MeanCornerDistance, MaxCornerDistance, PCK
+from src.components.metrics import PolygonIoU
+from src.components.metrics import SuccessRate
 
 
 def build_default_metrics():
