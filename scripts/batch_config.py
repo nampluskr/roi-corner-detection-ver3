@@ -2,83 +2,97 @@
 
 # reg
 REG_CONFIGS = [
-    # {"method": "reg", "batch_size": 4, "max_epochs": 5, "backbone": "custom", "head": "gap"},
-    # {"method": "reg", "batch_size": 4, "max_epochs": 5, "backbone": "custom", "head": "spatial"},
-    # {"method": "reg", "batch_size": 4, "max_epochs": 5, "backbone": "resnet18", "head": "spatial"},
-    # {"method": "reg", "batch_size": 4, "max_epochs": 5, "backbone": "resnet34", "head": "spatial"},
-    # {"method": "reg", "batch_size": 4, "max_epochs": 5, "backbone": "resnet50", "head": "spatial", "warmup_epochs": 1},
-    # {"method": "reg", "batch_size": 4, "max_epochs": 5, "backbone": "vgg16", "head": "spatial"},
-    # {"method": "reg", "batch_size": 4, "max_epochs": 5, "backbone": "vgg19", "head": "spatial"},
+    # {"model": "reg", "batch_size": 4, "max_epochs": 5, "network": "custom", "head": "gap"},
+    # {"model": "reg", "batch_size": 4, "max_epochs": 5, "network": "custom", "head": "spatial"},
+    # {"model": "reg", "batch_size": 4, "max_epochs": 5, "network": "resnet18", "head": "spatial"},
+    # {"model": "reg", "batch_size": 4, "max_epochs": 5, "network": "resnet34", "head": "spatial"},
+    # {"model": "reg", "batch_size": 4, "max_epochs": 5, "network": "resnet50", "head": "spatial", "warmup_epochs": 1},
+    # {"model": "reg", "batch_size": 4, "max_epochs": 5, "network": "vgg16", "head": "spatial"},
+    # {"model": "reg", "batch_size": 4, "max_epochs": 5, "network": "vgg19", "head": "spatial"},
 
-    # {"method": "reg", "batch_size": 4, "max_epochs": 5, "backbone": "vit_b_16", "head": "spatial"},
-    # {"method": "reg", "batch_size": 4, "max_epochs": 5, "backbone": "swin_t", "head": "spatial"},
-    # {"method": "reg", "batch_size": 4, "max_epochs": 5, "backbone": "wide_resnet50_2.tv_in1k", "head": "spatial"},
-    # {"method": "reg", "batch_size": 4, "max_epochs": 5, "backbone": "deit_base_distilled_patch16_224.fb_in1k", "head": "spatial"},
-    # {"method": "reg", "batch_size": 4, "max_epochs": 5, "backbone": "cait_s24_224.fb_dist_in1k", "head": "spatial"},
+    # {"model": "reg", "batch_size": 4, "max_epochs": 5, "network": "vit_b_16", "head": "spatial"},
+    # {"model": "reg", "batch_size": 4, "max_epochs": 5, "network": "swin_t", "head": "spatial"},
+    # {"model": "reg", "batch_size": 4, "max_epochs": 5, "network": "wide_resnet50_2.tv_in1k", "head": "spatial"},
+    # {"model": "reg", "batch_size": 4, "max_epochs": 5, "network": "deit_base_distilled_patch16_224.fb_in1k", "head": "spatial"},
+    # {"model": "reg", "batch_size": 4, "max_epochs": 5, "network": "cait_s24_224.fb_dist_in1k", "head": "spatial"},
 ]
 
 # seg
 SEG_CONFIGS = [
-    # {"method": "seg", "batch_size": 4, "max_epochs": 5, "backbone": "custom", "head": "mask"},
-    # {"method": "seg", "batch_size": 4, "max_epochs": 5, "backbone": "resnet18", "head": "mask", "warmup_epochs": 1},
-    # {"method": "seg", "batch_size": 4, "max_epochs": 5, "backbone": "resnet34", "head": "mask"},
-    # {"method": "seg", "batch_size": 4, "max_epochs": 5, "backbone": "resnet50", "head": "mask"},
-    # {"method": "seg", "batch_size": 4, "max_epochs": 5, "backbone": "efficientnet_b0", "head": "mask"},
-    # {"method": "seg", "batch_size": 4, "max_epochs": 5, "backbone": "swin_t", "head": "mask"},
-    # {"method": "seg", "batch_size": 4, "max_epochs": 5, "backbone": "vgg16", "head": "mask"},
-    # {"method": "seg", "batch_size": 4, "max_epochs": 5, "backbone": "vgg19", "head": "mask"},
-    # {"method": "seg", "batch_size": 4, "max_epochs": 5, "backbone": "wide_resnet50_2.tv_in1k", "head": "mask"},
+    # {"model": "seg", "batch_size": 4, "max_epochs": 5, "network": "custom", "head": "mask"},
+    # {"model": "seg", "batch_size": 4, "max_epochs": 5, "network": "resnet18", "head": "mask", "warmup_epochs": 1},
+    # {"model": "seg", "batch_size": 4, "max_epochs": 5, "network": "resnet34", "head": "mask"},
+    # {"model": "seg", "batch_size": 4, "max_epochs": 5, "network": "resnet50", "head": "mask"},
+    # {"model": "seg", "batch_size": 4, "max_epochs": 5, "network": "efficientnet_b0", "head": "mask"},
+    # {"model": "seg", "batch_size": 4, "max_epochs": 5, "network": "swin_t", "head": "mask"},
+    # {"model": "seg", "batch_size": 4, "max_epochs": 5, "network": "vgg16", "head": "mask"},
+    # {"model": "seg", "batch_size": 4, "max_epochs": 5, "network": "vgg19", "head": "mask"},
+    # {"model": "seg", "batch_size": 4, "max_epochs": 5, "network": "wide_resnet50_2.tv_in1k", "head": "mask"},
 
-    # {"method": "torchseg", "model": "fcn_resnet50", "batch_size": 4, "max_epochs": 5, "backbone": "", "head": "mask"},
-    # {"method": "torchseg", "model": "deeplabv3_resnet50", "batch_size": 4, "max_epochs": 5, "backbone": "", "head": "mask"},
-    # {"method": "torchseg", "model": "deeplabv3_mobilenet_v3_large", "batch_size": 4, "max_epochs": 5, "backbone": "", "head": "mask"},
-    # {"method": "torchseg", "model": "lraspp_mobilenet_v3_large", "batch_size": 4, "max_epochs": 5, "backbone": "", "head": "mask"},
+    # {"model": "torchseg", "batch_size": 4, "max_epochs": 5, "network": "fcn_resnet50", "head": "mask"},
+    # {"model": "torchseg", "batch_size": 4, "max_epochs": 5, "network": "deeplabv3_resnet50", "head": "mask"},
+    # {"model": "torchseg", "batch_size": 4, "max_epochs": 5, "network": "deeplabv3_mobilenet_v3_large", "head": "mask"},
+    # {"model": "torchseg", "batch_size": 4, "max_epochs": 5, "network": "lraspp_mobilenet_v3_large", "head": "mask"},
 ]
 
-# heatmap
-HEATMAP_CONFIGS = [
-    # {"method": "heatmap", "batch_size": 4, "max_epochs": 5, "backbone": "resnet18", "head": "heatmap", "warmup_epochs": 1},
-    # {"method": "heatmap", "batch_size": 4, "max_epochs": 5, "backbone": "custom", "head": "heatmap"},
-    # {"method": "heatmap", "batch_size": 4, "max_epochs": 5, "backbone": "resnet34", "head": "heatmap"},
-    # {"method": "heatmap", "batch_size": 4, "max_epochs": 5, "backbone": "resnet50", "head": "heatmap"},
-    # {"method": "heatmap", "batch_size": 4, "max_epochs": 5, "backbone": "efficientnet_b0", "head": "heatmap"},
-    # {"method": "heatmap", "batch_size": 4, "max_epochs": 5, "backbone": "swin_t", "head": "heatmap"},
-    # {"method": "heatmap", "batch_size": 4, "max_epochs": 5, "backbone": "vgg16", "head": "heatmap"},
-    # {"method": "heatmap", "batch_size": 4, "max_epochs": 5, "backbone": "vgg19", "head": "heatmap"},
-    # {"method": "heatmap", "batch_size": 4, "max_epochs": 5, "backbone": "wide_resnet50_2.tv_in1k", "head": "heatmap"},
+# peak
+PEAK_CONFIGS = [
+    # {"model": "peak", "batch_size": 4, "max_epochs": 5, "network": "resnet18", "head": "peak", "warmup_epochs": 1},
+    # {"model": "peak", "batch_size": 4, "max_epochs": 5, "network": "custom", "head": "peak"},
+    # {"model": "peak", "batch_size": 4, "max_epochs": 5, "network": "resnet34", "head": "peak"},
+    # {"model": "peak", "batch_size": 4, "max_epochs": 5, "network": "resnet50", "head": "peak"},
+    # {"model": "peak", "batch_size": 4, "max_epochs": 5, "network": "efficientnet_b0", "head": "peak"},
+    # {"model": "peak", "batch_size": 4, "max_epochs": 5, "network": "swin_t", "head": "peak"},
+    # {"model": "peak", "batch_size": 4, "max_epochs": 5, "network": "vgg16", "head": "peak"},
+    # {"model": "peak", "batch_size": 4, "max_epochs": 5, "network": "vgg19", "head": "peak"},
+    # {"model": "peak", "batch_size": 4, "max_epochs": 5, "network": "wide_resnet50_2.tv_in1k", "head": "peak"},
+]
+
+# ridge
+RIDGE_CONFIGS = [
+    # {"model": "ridge", "batch_size": 4, "max_epochs": 5, "network": "resnet18", "head": "ridge", "warmup_epochs": 1},
+    # {"model": "ridge", "batch_size": 4, "max_epochs": 5, "network": "custom", "head": "ridge"},
+    # {"model": "ridge", "batch_size": 4, "max_epochs": 5, "network": "resnet34", "head": "ridge"},
+    # {"model": "ridge", "batch_size": 4, "max_epochs": 5, "network": "resnet50", "head": "ridge"},
+    # {"model": "ridge", "batch_size": 4, "max_epochs": 5, "network": "efficientnet_b0", "head": "ridge"},
+    # {"model": "ridge", "batch_size": 4, "max_epochs": 5, "network": "swin_t", "head": "ridge"},
+    {"model": "ridge", "batch_size": 4, "max_epochs": 5, "network": "vgg16", "head": "ridge"},
+    # {"model": "ridge", "batch_size": 4, "max_epochs": 5, "network": "vgg19", "head": "ridge"},
+    # {"model": "ridge", "batch_size": 4, "max_epochs": 5, "network": "wide_resnet50_2.tv_in1k", "head": "ridge"},
 ]
 
 # det
 DET_CONFIGS = [
-    # {"method": "det", "batch_size": 4, "max_epochs": 5, "backbone": "custom", "head": "box"},
-    # {"method": "det", "batch_size": 4, "max_epochs": 5, "backbone": "custom", "head": "point"},
-    # {"method": "det", "batch_size": 4, "max_epochs": 5, "backbone": "resnet18", "head": "box"},
-    # {"method": "det", "batch_size": 4, "max_epochs": 5, "backbone": "resnet34", "head": "box"},
-    # {"method": "det", "batch_size": 4, "max_epochs": 5, "backbone": "resnet50", "head": "box"},
-    # {"method": "det", "batch_size": 4, "max_epochs": 5, "backbone": "efficientnet_b0", "head": "box"},
-    # {"method": "det", "batch_size": 4, "max_epochs": 5, "backbone": "swin_t", "head": "box"},
-    # {"method": "det", "batch_size": 4, "max_epochs": 5, "backbone": "vgg16", "head": "box"},
-    # {"method": "det", "batch_size": 4, "max_epochs": 5, "backbone": "vgg19", "head": "box"},
-    # {"method": "det", "batch_size": 4, "max_epochs": 5, "backbone": "wide_resnet50_2.tv_in1k", "head": "box"},
+    # {"model": "det", "batch_size": 4, "max_epochs": 5, "network": "custom", "head": "box"},
+    # {"model": "det", "batch_size": 4, "max_epochs": 5, "network": "custom", "head": "point"},
+    # {"model": "det", "batch_size": 4, "max_epochs": 5, "network": "resnet18", "head": "box"},
+    # {"model": "det", "batch_size": 4, "max_epochs": 5, "network": "resnet34", "head": "box"},
+    # {"model": "det", "batch_size": 4, "max_epochs": 5, "network": "resnet50", "head": "box"},
+    # {"model": "det", "batch_size": 4, "max_epochs": 5, "network": "efficientnet_b0", "head": "box"},
+    # {"model": "det", "batch_size": 4, "max_epochs": 5, "network": "swin_t", "head": "box"},
+    # {"model": "det", "batch_size": 4, "max_epochs": 5, "network": "vgg16", "head": "box"},
+    # {"model": "det", "batch_size": 4, "max_epochs": 5, "network": "vgg19", "head": "box"},
+    # {"model": "det", "batch_size": 4, "max_epochs": 5, "network": "wide_resnet50_2.tv_in1k", "head": "box"},
 
-    # {"method": "torchdet", "model": "fasterrcnn_resnet50_fpn", "batch_size": 4, "max_epochs": 5, "backbone": "", "head": "box", "warmup_epochs": 1},
-    # {"method": "torchdet", "model": "fasterrcnn_resnet50_fpn", "batch_size": 4, "max_epochs": 5, "backbone": "", "head": "point", "warmup_epochs": 1},
-    # {"method": "torchdet", "model": "retinanet_resnet50_fpn", "batch_size": 4, "max_epochs": 5, "backbone": "", "head": "box"},
-    # {"method": "torchdet", "model": "retinanet_resnet50_fpn", "batch_size": 4, "max_epochs": 5, "backbone": "", "head": "point"},
-    # {"method": "torchdet", "model": "ssd300_vgg16", "batch_size": 4, "max_epochs": 5, "backbone": "", "head": "box"},
-    # {"method": "torchdet", "model": "ssd300_vgg16", "batch_size": 4, "max_epochs": 5, "backbone": "", "head": "point"},
-    # {"method": "detr", "model": "detr_resnet50", "batch_size": 4, "max_epochs": 5, "backbone": "", "head": "box"},
-    # {"method": "detr", "model": "detr_resnet50", "batch_size": 4, "max_epochs": 5, "backbone": "", "head": "point"},
-    {"method": "yolo", "model": "yolov8n", "batch_size": 4, "max_epochs": 5, "backbone": "", "head": "box"},
-    {"method": "yolo", "model": "yolov8n", "batch_size": 4, "max_epochs": 5, "backbone": "", "head": "point"},
+    # {"model": "torchdet", "batch_size": 4, "max_epochs": 5, "network": "fasterrcnn_resnet50_fpn", "head": "box", "warmup_epochs": 1},
+    # {"model": "torchdet", "batch_size": 4, "max_epochs": 5, "network": "fasterrcnn_resnet50_fpn", "head": "point", "warmup_epochs": 1},
+    # {"model": "torchdet", "batch_size": 4, "max_epochs": 5, "network": "retinanet_resnet50_fpn", "head": "box"},
+    # {"model": "torchdet", "batch_size": 4, "max_epochs": 5, "network": "retinanet_resnet50_fpn", "head": "point"},
+    # {"model": "torchdet", "batch_size": 4, "max_epochs": 5, "network": "ssd300_vgg16", "head": "box"},
+    # {"model": "torchdet", "batch_size": 4, "max_epochs": 5, "network": "ssd300_vgg16", "head": "point"},
+    # {"model": "detr", "batch_size": 4, "max_epochs": 5, "network": "detr_resnet50", "head": "box"},
+    # {"model": "detr", "batch_size": 4, "max_epochs": 5, "network": "detr_resnet50", "head": "point"},
+    # {"model": "yolo", "batch_size": 4, "max_epochs": 5, "network": "yolov8n", "head": "box"},
+    # {"model": "yolo", "batch_size": 4, "max_epochs": 5, "network": "yolov8n", "head": "point"},
 ]
 
 # method comparison templates; keep separate from the active CONFIGS queue
 METHOD_COMPARISON_CONFIGS = [
-    # {"method": "reg", "backbone": "custom", "head": "gap", "batch_size": 4, "test_size": 1000, "checkpoint": "outputs/public/reg/custom_gap/example/model.pth"},
-    # {"method": "seg", "backbone": "custom", "head": "mask", "batch_size": 4, "test_size": 1000, "checkpoint": "outputs/public/seg/custom_mask/example/model.pth"},
-    # {"method": "det", "backbone": "custom", "head": "box", "batch_size": 4, "test_size": 1000, "checkpoint": "outputs/public/det/custom_box/example/model.pth"},
-    # {"method": "heatmap", "backbone": "custom", "head": "heatmap", "batch_size": 4, "test_size": 1000, "checkpoint": "outputs/public/heatmap/custom_heatmap/example/model.pth"},
+    # {"model": "reg", "batch_size": 4, "network": "custom", "head": "gap", "test_size": 1000, "checkpoint": "outputs/public/reg/custom_gap/example/model.pth"},
+    # {"model": "seg", "batch_size": 4, "network": "custom", "head": "mask", "test_size": 1000, "checkpoint": "outputs/public/seg/custom_mask/example/model.pth"},
+    # {"model": "det", "batch_size": 4, "network": "custom", "head": "box", "test_size": 1000, "checkpoint": "outputs/public/det/custom_box/example/model.pth"},
+    # {"model": "peak", "batch_size": 4, "network": "custom", "head": "peak", "test_size": 1000, "checkpoint": "outputs/public/peak/custom_peak/example/model.pth"},
+    # {"model": "ridge", "batch_size": 4, "network": "custom", "head": "ridge", "test_size": 1000, "checkpoint": "outputs/public/ridge/custom_ridge/example/model.pth"},
 ]
 
-CONFIGS = REG_CONFIGS + SEG_CONFIGS + HEATMAP_CONFIGS + DET_CONFIGS
+CONFIGS = REG_CONFIGS + SEG_CONFIGS + PEAK_CONFIGS + RIDGE_CONFIGS + DET_CONFIGS

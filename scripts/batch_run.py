@@ -15,14 +15,14 @@ from scripts.batch_config import CONFIGS
 MODES = ["train", "evaluate", "predict"]
 
 PASS_KEYS = [
-    "backbone", "head", "model", "device", "batch_size", "max_epochs", "num_workers",
+    "network", "head", "device", "batch_size", "max_epochs", "num_workers",
     "train_size", "valid_size", "test_size", "checkpoint", "output_dir", "warmup_epochs",
 ]
 
 
 def get_cli_args(cfg, mode):
     """Return CLI args for one mode script built from one config dict."""
-    args = ["--method", cfg["method"]]
+    args = ["--model", cfg["model"]]
     if mode == "train":
         args.append("--save")
     for key in PASS_KEYS:

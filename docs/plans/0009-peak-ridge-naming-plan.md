@@ -1,7 +1,7 @@
 ---
-상태: Draft
+상태: Done
 작성일: 2026-07-21
-완료일: (미정)
+완료일: 2026-07-21
 적용 범위: ver3 `src/methods/heatmap/` → `src/methods/peak/`, `src/methods/linemap/` → `src/methods/ridge/`, `src/components/heads.py`, `src/core/factory.py`, `scripts/config.py`, `scripts/batch_config.py`
 관련 문서: [../README.md](../README.md), [../CLAUDE.md](../CLAUDE.md), [0005-methods-restructure-plan.md](0005-methods-restructure-plan.md), [0006-heatmap-postprocessor-argmax-plan.md](0006-heatmap-postprocessor-argmax-plan.md), [0008-ridge-method-plan.md](0008-ridge-method-plan.md), [0010-method-to-model-and-network-arg-plan.md](0010-method-to-model-and-network-arg-plan.md)
 ---
@@ -96,6 +96,28 @@ method는 인접한 두 코너를 지나는 무한 직선을 가우시안 능선
 
 ## 검증
 
-이 플랜은 문서 작성만 수행하는 Draft 단계이며, 코드 변경과 검증은 아직 수행하지 않았다. 후속
-작업에서 위 범위대로 변경한 뒤 import 검증과 `scripts/train.py --method peak`(또는 0010 적용 후
-`--model peak`), `scripts/train.py --method ridge` 실행 결과를 이 섹션에 기록한다.
+이 플랜은 [0010](0010-method-to-model-and-network-arg-plan.md)과 한 작업에서 함께 구현했다. 개명을
+먼저 적용하고 이어서 0010의 `src/methods/` $\to$ `src/models/` 이동과 `--model`/`--network` 인자
+체계를 반영했으므로, 최종 상태는 `src/models/peak/`, `src/models/ridge/` 기준이다.
+
+구현 결과는 다음과 같다.
+
+- `src/methods/heatmap/`를 `src/models/peak/`로 옮기고 클래스명을 `PeakModel`,
+  `PeakPreprocessor`, `PeakPostprocessor`, `PeakWrapper`로, 모델 속성을 `peak_stride`로,
+  preprocessor 인자를 `peak_size`로, head 문자열을 `"peak"`로 변경했다.
+- `src/components/heads.py`의 공유 헤드는 `HeatmapHead` $\to$ `FourChannelDenseHead`로 개명하여
+  `peak`/`ridge` 어느 쪽에도 편중되지 않도록 정리했다. `peak`과 `ridge`의 model.py가 이 이름을
+  import한다.
+- `src/components/losses.py`의 `HeatmapFocalLoss`/`HeatmapMSELoss`는 제외 항목대로 유지했다.
+- `src/core/factory.py`의 `get_wrapper`가 `"peak"`, `"ridge"` 분기를 처리한다(0010에서 첫 인자가
+  `method` $\to$ `model`로 함께 바뀌었다).
+- `scripts/config.py`의 warmup 목록과 `scripts/batch_config.py`의 `PEAK_CONFIGS`(및 신규
+  `RIDGE_CONFIGS`), `METHOD_COMPARISON_CONFIGS` 예시와 체크포인트 경로를 갱신했다.
+
+검증은 conda `pytorch_env`에서 다음을 수행했다.
+
+- import 검증: `PYTHONPATH=<project-root> python -c "import src.core.factory; import
+  src.models.peak.wrapper; import src.models.ridge.wrapper"` 오류 없음.
+- forward 검증: `get_wrapper("peak", network="custom")`, `get_wrapper("ridge", network="custom")`가
+  `(2, 3, 224, 224)` 입력에 대해 `(2, 4, 112, 112)` 출력을 반환함을 확인했다.
+- 실제 학습 스크립트의 전체 실행과 수치 수렴 검증은 이 세션에서 수행하지 않았다.

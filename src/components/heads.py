@@ -1,4 +1,4 @@
-# src/components/heads.py: task prediction heads (coordinate, detection, heatmap, mask)
+# src/components/heads.py: task prediction heads (coordinate, detection, dense, mask)
 
 import torch.nn as nn
 
@@ -63,10 +63,10 @@ class DetectionHead(nn.Module):
         return {"cls": self.cls_conv(x), "box": self.box_conv(x)}
 
 
-# --- predicts four corner heatmap logits from decoded features ---
+# --- predicts four dense channel logits from decoded features (shared by peak and ridge) ---
 
-class HeatmapHead(nn.Module):
-    """Projects a decoded spatial feature to four corner heatmap logits."""
+class FourChannelDenseHead(nn.Module):
+    """Projects a decoded spatial feature to four dense channel logits."""
 
     def __init__(self, in_channels):
         super().__init__()

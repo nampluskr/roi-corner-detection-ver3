@@ -20,7 +20,7 @@ def main():
     test_loader = get_dataloader(
         "test", args.csv_path, image_size=args.image_size, seed=args.seed,
         batch_size=args.batch_size, num_workers=args.num_workers, num_samples=args.test_size)
-    wrapper = get_wrapper(args.method, device=args.device, **get_wrapper_kwargs(args))
+    wrapper = get_wrapper(args.model, device=args.device, **get_wrapper_kwargs(args))
     load_model(wrapper.model, args.checkpoint)
     evaluator = Evaluator(wrapper, output_dir=output_dir)
     results = evaluator.evaluate(test_loader)

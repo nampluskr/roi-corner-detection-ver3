@@ -13,10 +13,9 @@ DEFAULTS = dict(
     ],
     seed=42,
     dataset="public",
-    method="reg",
-    backbone="custom",
+    model="reg",
+    network="custom",
     head="gap",
-    model=None,
     image_size=224,
     batch_size=4,
     max_epochs=5,
@@ -37,50 +36,44 @@ def cfg_get(cfg, key, default=None):
 
 
 def get_experiment(cfg):
-    """Build an experiment name string from method, batch_size, max_epochs, model/backbone, and head."""
-    method = cfg_get(cfg, "method", DEFAULTS["method"])
+    """Build an experiment name string from model, batch_size, max_epochs, network, and head."""
+    model = cfg_get(cfg, "model", DEFAULTS["model"])
     batch_size = cfg_get(cfg, "batch_size", DEFAULTS["batch_size"])
     max_epochs = cfg_get(cfg, "max_epochs", DEFAULTS["max_epochs"])
-    model = cfg_get(cfg, "model", None)
-    backbone = model or cfg_get(cfg, "backbone", DEFAULTS["backbone"]) or DEFAULTS["backbone"]
+    network = cfg_get(cfg, "network", DEFAULTS["network"]) or DEFAULTS["network"]
     head = cfg_get(cfg, "head", DEFAULTS["head"]) or DEFAULTS["head"]
-    return "%s_bs%d_ep%d_%s_%s" % (method, batch_size, max_epochs, backbone, head)
+    return "%s_bs%d_ep%d_%s_%s" % (model, batch_size, max_epochs, network, head)
 
 
 def get_model_name(cfg):
-    """Return a model name segment derived from model override or backbone."""
-    model = cfg_get(cfg, "model", None)
-    if model:
-        return model
-    backbone = cfg_get(cfg, "backbone", DEFAULTS["backbone"]) or DEFAULTS["backbone"]
+    """Return a name segment combining network and head."""
+    network = cfg_get(cfg, "network", DEFAULTS["network"]) or DEFAULTS["network"]
     head = cfg_get(cfg, "head", DEFAULTS["head"]) or DEFAULTS["head"]
-    return "%s_%s" % (backbone, head)
+    return "%s_%s" % (network, head)
 
 
 def get_output_dir(cfg, base="outputs"):
-    """Return the outputs/{dataset}/{method}/{model}/{exp_name} directory for the given config."""
+    """Return the outputs/{dataset}/{model}/{network_head}/{exp_name} directory for the given config."""
     dataset = cfg_get(cfg, "dataset", DEFAULTS["dataset"])
-    method = cfg_get(cfg, "method", DEFAULTS["method"])
-    return os.path.join(base, dataset, method, get_model_name(cfg), get_experiment(cfg))
+    model = cfg_get(cfg, "model", DEFAULTS["model"])
+    return os.path.join(base, dataset, model, get_model_name(cfg), get_experiment(cfg))
 
 
 def get_wrapper_kwargs(args):
     """Collect wrapper constructor kwargs from parsed args, passing through only set values."""
     kwargs = {}
-    if getattr(args, "backbone", None):
-        kwargs["backbone"] = args.backbone
+    if getattr(args, "network", None):
+        kwargs["network"] = args.network
     if getattr(args, "head", None):
         kwargs["head"] = args.head
-    if getattr(args, "model", None):
-        kwargs["model"] = args.model
-    warmup_methods = ("reg", "seg", "det", "heatmap", "torchseg", "torchdet", "yolo", "detr")
-    if getattr(args, "method", None) in warmup_methods and getattr(args, "warmup_epochs", None) is not None:
+    warmup_models = ("reg", "seg", "det", "peak", "ridge", "torchseg", "torchdet", "yolo", "detr")
+    if getattr(args, "model", None) in warmup_models and getattr(args, "warmup_epochs", None) is not None:
         kwargs["warmup_epochs"] = args.warmup_epochs
     return kwargs
 
 
 def parse_args():
-    """Parse command-line arguments for scripts/train.py, defaulting to the reg method."""
+    """Parse command-line arguments for scripts/train.py, defaulting to the reg model."""
     parser = argparse.ArgumentParser()
     parser.set_defaults(**DEFAULTS)
 
@@ -88,10 +81,9 @@ def parse_args():
     parser.add_argument("--csv_path", type=str, nargs="+")
     parser.add_argument("--seed", type=int)
     parser.add_argument("--dataset", type=str)
-    parser.add_argument("--method", type=str)
-    parser.add_argument("--backbone", type=str)
-    parser.add_argument("--head", type=str)
     parser.add_argument("--model", type=str)
+    parser.add_argument("--network", "--net", dest="network", type=str)
+    parser.add_argument("--head", type=str)
     parser.add_argument("--image_size", type=int)
     parser.add_argument("--batch_size", type=int)
     parser.add_argument("--max_epochs", type=int)

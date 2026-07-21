@@ -48,33 +48,36 @@ def get_dataloader(split, csv_path, image_size=224, has_corners=True, split_rati
     return Dataloader(split, dataset, batch_size=batch_size, seed=seed, num_workers=num_workers)
 
 
-def get_wrapper(method, device=None, **kwargs):
-    """Return a method-specific wrapper built with the given device and kwargs."""
-    if method == "reg":
-        from src.methods.reg.wrapper import RegWrapper
+def get_wrapper(model, device=None, **kwargs):
+    """Return a model-specific wrapper built with the given device and kwargs."""
+    if model == "reg":
+        from src.models.reg.wrapper import RegWrapper
         return RegWrapper(device=device, **kwargs)
-    if method == "seg":
-        from src.methods.seg.wrapper import SegWrapper
+    if model == "seg":
+        from src.models.seg.wrapper import SegWrapper
         return SegWrapper(device=device, **kwargs)
-    if method == "det":
-        from src.methods.det.wrapper import DetWrapper
+    if model == "det":
+        from src.models.det.wrapper import DetWrapper
         return DetWrapper(device=device, **kwargs)
-    if method == "heatmap":
-        from src.methods.heatmap.wrapper import HeatmapWrapper
-        return HeatmapWrapper(device=device, **kwargs)
-    if method == "torchseg":
-        from src.methods.torchseg.wrapper import TorchSegWrapper
+    if model == "peak":
+        from src.models.peak.wrapper import PeakWrapper
+        return PeakWrapper(device=device, **kwargs)
+    if model == "ridge":
+        from src.models.ridge.wrapper import RidgeWrapper
+        return RidgeWrapper(device=device, **kwargs)
+    if model == "torchseg":
+        from src.models.torchseg.wrapper import TorchSegWrapper
         return TorchSegWrapper(device=device, **kwargs)
-    if method == "torchdet":
-        from src.methods.torchdet.wrapper import TorchDetWrapper
+    if model == "torchdet":
+        from src.models.torchdet.wrapper import TorchDetWrapper
         return TorchDetWrapper(device=device, **kwargs)
-    if method == "yolo":
-        from src.methods.yolo.wrapper import YoloWrapper
+    if model == "yolo":
+        from src.models.yolo.wrapper import YoloWrapper
         return YoloWrapper(device=device, **kwargs)
-    if method == "detr":
-        from src.methods.detr.wrapper import DetrWrapper
+    if model == "detr":
+        from src.models.detr.wrapper import DetrWrapper
         return DetrWrapper(device=device, **kwargs)
-    raise NotImplementedError("method not yet implemented: %s" % method)
+    raise NotImplementedError("model not yet implemented: %s" % model)
 
 
 def get_logger(name, output_dir=None):

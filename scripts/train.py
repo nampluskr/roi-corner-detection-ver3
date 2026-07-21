@@ -1,4 +1,4 @@
-# scripts/train.py: train a method (default: reg) using Trainer
+# scripts/train.py: train a model (default: reg) using Trainer
 
 import os
 import sys
@@ -22,7 +22,7 @@ def main():
         seed=args.seed, batch_size=args.batch_size, num_workers=args.num_workers,
         num_samples=args.valid_size)
 
-    wrapper = get_wrapper(args.method, device=args.device, **get_wrapper_kwargs(args))
+    wrapper = get_wrapper(args.model, device=args.device, **get_wrapper_kwargs(args))
     trainer = Trainer(wrapper, output_dir=output_dir)
     history = trainer.fit_early_stop(train_loader, valid_loader,
         max_epochs=args.max_epochs, patience=args.patience)

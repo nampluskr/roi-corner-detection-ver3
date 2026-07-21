@@ -68,10 +68,12 @@
 
 ## 검증
 
-- 4개 파일(`model.py`, `preprocessor.py`, `postprocessor.py`, `wrapper.py`)과 `__init__.py`를
+- 4개 파일(`model.py`, `preprocessor.py`, `postprocessor.py`, `wrapper.py`)을
   `src/methods/ridge/`에 생성했다(도입 당시 경로는 `src/methods/linemap/`이었고, 이후 `ridge`로
   개명하면서 클래스명 `Linemap*` → `Ridge*`, 속성 `linemap_stride` → `ridge_stride`, 인자
-  `ridge_size` 등으로 함께 변경했다).
+  `ridge_size` 등으로 함께 변경했다). 빈 `__init__.py`는 최초 도입 당시 누락되어 있었고,
+  [0009](0009-peak-ridge-naming-plan.md)와 [0010](0010-method-to-model-and-network-arg-plan.md)을
+  구현하는 작업에서 `src/models/ridge/__init__.py`로 추가했다.
 - `heatmap`(→`peak`) method의 대응 파일과 구조를 대조하여 `BaseModel`/`BasePreprocessor`/
   `BasePostprocessor`/`BaseWrapper` 인터페이스를 동일하게 만족함을 확인했다.
 - 실제 학습 스크립트(`scripts/train.py --method ridge`) 실행과 `PolygonIoU` 수치 검증은
