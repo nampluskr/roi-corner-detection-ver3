@@ -1,42 +1,75 @@
 # 문서 색인
 
-이 문서는 `260712_roi-corner-detection-ver2`의 폴더/파일을 재구성한 결과를 확립하는 문서
-워크플로우의 canonical 정의다.
+이 문서는 `roi-corner-detection-ver3`의 canonical 문서 위치와 책임을 안내한다. 구현의 실제 동작이
+최우선 기준이며, root README와 아래 architecture, guide, model, reference 문서가 이를 설명한다.
 
-ver2의 SSOT/canonical 문서(`docs/architecture/model-assembly.md` 등)는 참고 자료로만 사용한다.
-사용자의 재구성 요청은 ver3에서 실제로 실행하고, 확정된 결과를 이 프로젝트의 canonical 문서로
-새로 기록한다.
+## Canonical Documents
 
-## 문서 색인 표
+프로젝트를 이해하고 실행하는 데 사용하는 문서는 다음과 같다.
 
-| 문서 | 상태 | 책임 |
-| --- | --- | --- |
-| [AGENTS.md](../AGENTS.md) | 현재 기준 | Codex 전용 진입점 |
-| [README.md](../README.md) | 현재 기준 | 프로젝트 목적, 재구성 대상 |
-| [CLAUDE.md](../CLAUDE.md) | 현재 기준 | Claude Code 전용 진입점 |
-| [plans/](plans/) | 이력 | 작업 계획과 완료 이력 |
+| 문서 | 책임 |
+| --- | --- |
+| [README.md](../README.md) | 프로젝트 개요, model registry, 기본 실행 기준 |
+| [architecture/model-assembly.md](architecture/model-assembly.md) | `model`, `network`, `head` 조립 규칙 |
+| [architecture/model-contract.md](architecture/model-contract.md) | image, corner, raw output, wrapper contract |
+| [architecture/src-layout.md](architecture/src-layout.md) | `src/` module 책임 경계 |
+| [architecture/training-and-inference-flow.md](architecture/training-and-inference-flow.md) | training, evaluation, prediction 흐름 |
+| [guides/](guides/) | CLI, data, output, experiment workflow |
+| [models/](models/) | model별 표현, target, loss, postprocess |
+| [reference/](reference/) | shared loss와 metric 기준 |
+| [glossary.md](glossary.md) | project 용어 정의 |
 
-## 첫 세션 진행 순서
+## Implementation Baseline
 
-1. `docs/plans/0001-root-and-docs-index-plan.md` 승인 후 루트 `README.md`, `CLAUDE.md`, `AGENTS.md`,
-   `docs/README.md`를 작성한다.
-2. 이후 사용자의 재구성 요청을 반영하는 실행과 canonical 문서 확립은 `0002`부터 순증가하는 plan으로
-   이어간다.
+현재 구현은 `scripts/`, `src/components/`, `src/core/`, `src/data/`, `src/models/`, `src/utils/`를
+기준으로 한다. model 선택자는 `reg`, `seg`, `det`, `peak`, `ridge`, `gcn`, `hybrid`, `torchseg`,
+`torchdet`, `yolo`, `detr`이다.
 
-## 플랜 규칙
+실행 script는 `--model`로 model을 선택하고, architecture 또는 external whole-model 이름은
+`--network` 또는 `--net`으로 지정한다. model별 세부 head는 `--head`로 지정하며, 기본 output 경로는
+다음 규칙을 따른다.
 
-- 경로는 `docs/plans/NNNN-topic-plan.md`이다.
-- 번호는 4자리 0-padding의 순증가 번호이며 재사용하거나 삭제하지 않는다.
-- 상태는 `Draft`, `Approved`, `Done` 중 하나를 사용한다.
-- 완료된 plan은 이력으로 보존한다.
+```text
+outputs/<dataset>/<model>/<network_head>/<exp_name>/
+```
 
-## 폴더 구조
+## Documentation Workflow
+
+새 canonical 문서, implementation, 구조 변경은 작업 전에 `docs/plans/NNNN-topic-plan.md`에 범위와
+완료 기준을 기록하고 승인을 받는다. 문서와 구현이 충돌하면 현재 구현을 확인한 뒤 canonical 문서를
+같은 작업에서 갱신한다.
+
+완료된 plan은 이력으로 보존한다. `plans/0001`부터 `plans/0014`까지는 재구성과 구현 조정 이력이고,
+[0015-canonical-documentation-plan.md](plans/0015-canonical-documentation-plan.md)는 현재 문서 체계를
+확립한 이력이다.
+
+현재 문서 구조는 다음과 같다.
 
 ```text
 docs/
-├── README.md
-└── plans/       # 계획과 이력
+├── architecture/
+│   ├── model-assembly.md
+│   ├── model-contract.md
+│   ├── src-layout.md
+│   └── training-and-inference-flow.md
+├── guides/
+│   ├── cli-usage.md
+│   ├── dataset-format.md
+│   ├── experiment-output.md
+│   └── training-workflow.md
+├── models/
+│   ├── README.md
+│   ├── dense-prediction.md
+│   ├── det.md
+│   ├── external-models.md
+│   ├── gcn.md
+│   ├── hybrid.md
+│   ├── reg.md
+│   └── seg.md
+├── plans/
+├── reference/
+│   ├── losses.md
+│   └── metrics.md
+├── glossary.md
+└── README.md
 ```
-
-초기 범위에서는 `architecture/`, `design/`, `specs/` 등의 폴더를 만들지 않는다. 재구성 결과를 담을
-canonical 문서 폴더는 실제로 필요해질 때 승인된 plan으로 추가한다.
