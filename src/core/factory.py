@@ -65,6 +65,12 @@ def get_wrapper(model, device=None, **kwargs):
     if model == "ridge":
         from src.models.ridge.wrapper import RidgeWrapper
         return RidgeWrapper(device=device, **kwargs)
+    if model == "gcn":
+        from src.models.gcn.wrapper import GCNWrapper
+        return GCNWrapper(device=device, **kwargs)
+    if model == "hybrid":
+        from src.models.hybrid.wrapper import HybridWrapper
+        return HybridWrapper(device=device, **kwargs)
     if model == "torchseg":
         from src.models.torchseg.wrapper import TorchSegWrapper
         return TorchSegWrapper(device=device, **kwargs)

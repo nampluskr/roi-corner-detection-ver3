@@ -66,7 +66,8 @@ def get_wrapper_kwargs(args):
         kwargs["network"] = args.network
     if getattr(args, "head", None):
         kwargs["head"] = args.head
-    warmup_models = ("reg", "seg", "det", "peak", "ridge", "torchseg", "torchdet", "yolo", "detr")
+    warmup_models = ("reg", "seg", "det", "peak", "ridge", "gcn", "hybrid",
+                     "torchseg", "torchdet", "yolo", "detr")
     if getattr(args, "model", None) in warmup_models and getattr(args, "warmup_epochs", None) is not None:
         kwargs["warmup_epochs"] = args.warmup_epochs
     return kwargs

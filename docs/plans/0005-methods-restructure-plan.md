@@ -48,7 +48,7 @@ ver2 내부 파일은 참고와 읽기 전용이므로([../CLAUDE.md](../CLAUDE.
 | yolo | 〃 | `YoloModel`,`YoloWrapper`,`YoloPreprocessor`,`YoloPostprocessor` | `models/det/*` (YoloDet 계열, 이름에서 "Det" 제거) |
 | detr | 〃 | `DetrModel`,`DetrWrapper`,`DetrPreprocessor`,`DetrPostprocessor` | `models/det/*` (DetrDet 계열, 이름에서 "Det" 제거) |
 
-또한 `src/components/decoders.py`를 신규로 만들어 `SegDecoder`(ver2 `models/seg/decoder.py`)를 이동한다.
+또한 `src/components/decoders.py`를 신규로 만들어 ver2의 segmentation decoder 구현을 `UNetDecoder`로 이동한다.
 seg와 heatmap model이 공유하므로 조립 재료(components SSOT)로 승격한다.
 
 ## 3. RegModel 통합 상세
@@ -105,7 +105,7 @@ class RegModel(BaseModel):
 | `src.models.necks.multi_scale_neck` | `src.components.necks` |
 | `src.models.heads.*` | `src.components.heads` |
 | `src.models.blocks.*` | `src.components.blocks` |
-| `src.models.seg.decoder` | `src.components.decoders` |
+| ver2 segmentation decoder module | `src.components.decoders` |
 | `src.losses.*` | `src.components.losses` |
 | `src.metrics.*` | `src.components.metrics` |
 | `src.models.<method>.<x>` | `src.methods.<method>.<x>` |
@@ -169,7 +169,7 @@ PYTHONPATH=/mnt/d/projects/nampluskr/00_review/260720_roi-corner-detection-ver3 
 - `src/methods/`에 base와 8 method 폴더가 있고, 각 폴더에 빈 `__init__.py`와 4파일이 존재한다.
 - `RegModel` 단일 클래스가 custom/timm/torchvision을 모두 처리하고 `CustomRegModel`/`TorchRegModel`이 없다.
 - reg/seg/det/heatmap이 custom backbone에서도 `warmup_epochs>0`일 때 freeze 후 unfreeze로 동작한다.
-- `src/components/decoders.py`에 `SegDecoder`가 있고 seg와 heatmap이 이를 import 한다.
+- `src/components/decoders.py`에 `UNetDecoder`가 있고 seg와 heatmap이 이를 import 한다.
 - factory가 `method`만으로 8개 wrapper를 dispatch 하고 `src.models.*` 참조 잔존이 없다.
 - ver2 파일은 하나도 변경되지 않는다.
 

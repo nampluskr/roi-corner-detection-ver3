@@ -29,7 +29,7 @@
 
 - `src/methods/ridge/model.py`: `RidgeModel`을 신규 작성한다. `heatmap`(→`peak`) method와 동일한
   백본(`custom`/`resnet`/`efficientnet`/`swin`/`vgg`/`timm-cnn`) 선택 로직, `FeatureExtractor`,
-  `SegDecoder`, 4채널 `HeatmapHead`를 재사용한다. 출력 채널 수(4)와 구조는 동일하므로 신규 head는
+  `UNetDecoder`, 4채널 `HeatmapHead`를 재사용한다. 출력 채널 수(4)와 구조는 동일하므로 신규 head는
   만들지 않는다.
 - `src/methods/ridge/preprocessor.py`: `RidgePreprocessor`를 신규 작성한다. `(N, 4, 2)` 정규화
   코너를 입력으로, 채널 `i`는 코너 `i`와 코너 `(i + 1) % 4`를 지나는 무한 직선까지의 수직 거리를
@@ -49,7 +49,7 @@
   `wrapper.py`)은 변경하지 않는다. `heatmap` → `peak` 명칭 변경은 이 플랜의 범위에 포함하지 않으며
   [0009](0009-peak-ridge-naming-plan.md)에서 별도로 다룬다.
 - `src/components/heads.py`, `src/components/decoders.py`, `src/components/losses.py`,
-  `src/components/metrics.py`는 변경하지 않는다. 기존 `HeatmapHead`, `SegDecoder`,
+  `src/components/metrics.py`는 변경하지 않는다. 기존 `HeatmapHead`, `UNetDecoder`,
   `HeatmapFocalLoss`, `PolygonIoU`를 그대로 재사용한다.
 - 다른 method(reg, seg, det, torchseg, torchdet, yolo, detr)는 변경하지 않는다.
 - 데이터셋/라벨링 코드에서 코너 순서(TR/TL/BR/BL 등)를 확정하는 작업은 이 플랜의 범위에 포함하지

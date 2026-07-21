@@ -67,7 +67,7 @@ method는 인접한 두 코너를 지나는 무한 직선을 가우시안 능선
 
 제외 항목:
 
-- `src/components/decoders.py`(`SegDecoder`), `src/components/losses.py`(`HeatmapFocalLoss`,
+- `src/components/decoders.py`(`UNetDecoder`), `src/components/losses.py`(`HeatmapFocalLoss`,
   `HeatmapMSELoss`)의 이름은 이 플랜에서 변경하지 않는다. `Heatmap` 접두어가 붙어 있지만 다른
   method(`seg` 등)에서도 재사용 가능한 일반 컴포넌트이므로, 이름 변경 여부는 별도 검토가 필요하다.
 - 이미 완료되어 이력으로 보존되는 [0006](0006-heatmap-postprocessor-argmax-plan.md) 문서 본문의

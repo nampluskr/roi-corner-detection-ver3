@@ -7,7 +7,7 @@ from src.components.backbones import SWIN_BACKBONES, VGG_BACKBONES, TorchBackbon
 from src.components.backbones import TIMM_CNN_BACKBONES, TimmBackbone
 from src.components.adapters import CNNBackboneAdapter
 from src.components.features import FeatureExtractor, FeatureSpec
-from src.components.decoders import SegDecoder
+from src.components.decoders import UNetDecoder
 from src.components.heads import MaskHead
 
 TORCH_SEG_BACKBONES = RESNET_BACKBONES + EFFICIENTNET_BACKBONES + SWIN_BACKBONES + VGG_BACKBONES
@@ -36,7 +36,7 @@ class SegModel(BaseModel):
         spec.require("stages")
 
         self.extractor = FeatureExtractor(encoder, adapter, spec)
-        self.decoder = SegDecoder(spec.stage_channels, upsample=upsample)
+        self.decoder = UNetDecoder(spec.stage_channels, upsample=upsample)
         self.head = MaskHead(self.decoder.out_channels)
         self.mask_stride = spec.stage_strides[0]
 

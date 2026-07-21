@@ -118,6 +118,7 @@ BACKBONE_WEIGHTS = {
     "resnet34": "/mnt/d/backbones/resnet34-b627a593.pth",
     "resnet50": "/mnt/d/backbones/resnet50-0676ba61.pth",
     "efficientnet_b0": "/mnt/d/backbones/efficientnet_b0_rwightman-7f5810bc.pth",
+    "mobilenet_v3_large": "/mnt/d/backbones/mobilenet_v3_large-8738ca79.pth",
     "vgg16": "/mnt/d/backbones/vgg16-397923af.pth",
     "vgg19": "/mnt/d/backbones/vgg19-dcbb9e9d.pth",
     "vit_b_16": "/mnt/d/backbones/vit_b_16-c867db91.pth",
@@ -129,6 +130,7 @@ BACKBONE_BUILDERS = {
     "resnet34": models.resnet34,
     "resnet50": models.resnet50,
     "efficientnet_b0": models.efficientnet_b0,
+    "mobilenet_v3_large": models.mobilenet_v3_large,
     "vgg16": models.vgg16,
     "vgg19": models.vgg19,
     "vit_b_16": models.vit_b_16,
@@ -138,6 +140,7 @@ BACKBONE_BUILDERS = {
 SUPPORTED_BACKBONES = tuple(BACKBONE_BUILDERS.keys())
 RESNET_BACKBONES = ("resnet18", "resnet34", "resnet50")
 EFFICIENTNET_BACKBONES = ("efficientnet_b0",)
+MOBILENET_BACKBONES = ("mobilenet_v3_large",)
 VGG_BACKBONES = ("vgg16", "vgg19")
 VIT_BACKBONES = ("vit_b_16",)
 SWIN_BACKBONES = ("swin_t",)
@@ -177,6 +180,13 @@ class TorchBackbone(BaseBackbone):
             self.stage_indices = (1, 2, 3, 5, 8)
             self.stage_channels = (16, 24, 40, 112, 1280)
             self.stage_strides = (2, 4, 8, 16, 32)
+        elif backbone in MOBILENET_BACKBONES:
+            self.family = "mobilenet"
+            self.features = net.features
+            self.out_channels = net.classifier[0].in_features
+            self.stage_indices = (1, 3, 6, 12, 16)
+            self.stage_channels = (16, 24, 40, 112, 960)
+            self.stage_strides = (2, 4, 8, 16, 32)
         elif backbone in SWIN_BACKBONES:
             self.family = "swin"
             self.stem = net.features
@@ -212,7 +222,7 @@ class TorchBackbone(BaseBackbone):
         return (256, 512, 1024, 2048)
 
     def forward(self, images):
-        if self.family == "efficientnet":
+        if self.family in ("efficientnet", "mobilenet"):
             x = images
             stages = []
             for i, layer in enumerate(self.features):

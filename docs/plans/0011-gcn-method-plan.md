@@ -1,8 +1,8 @@
 ---
-상태: Draft
+상태: Done
 작성일: 2026-07-21
-완료일: (미정)
-적용 범위: ver3 `src/methods/gcn/model.py`, `src/methods/gcn/preprocessor.py`, `src/methods/gcn/postprocessor.py`, `src/methods/gcn/wrapper.py`, `src/methods/gcn/__init__.py`, `src/components/losses.py`(신규 손실 클래스 추가), `src/core/factory.py`(dispatch 추가), `scripts/config.py`·`scripts/batch_config.py`(method 목록 추가)
+완료일: 2026-07-21
+적용 범위: ver3 `src/models/gcn/model.py`, `src/models/gcn/preprocessor.py`, `src/models/gcn/postprocessor.py`, `src/models/gcn/wrapper.py`, `src/models/gcn/__init__.py`, `src/components/losses.py`(신규 손실 클래스 추가), `src/core/factory.py`(dispatch 추가), `scripts/config.py`·`scripts/batch_config.py`(model 목록 추가)
 관련 문서: [../README.md](../README.md), [../CLAUDE.md](../CLAUDE.md), [0005-methods-restructure-plan.md](0005-methods-restructure-plan.md), [0008-ridge-method-plan.md](0008-ridge-method-plan.md), [0009-peak-ridge-naming-plan.md](0009-peak-ridge-naming-plan.md), [0010-method-to-model-and-network-arg-plan.md](0010-method-to-model-and-network-arg-plan.md), [Polygon GCN 방법론 문서](https://github.com/nampluskr/roi-corner-detection/blob/main/docs/models/07_polygon-gcn.md)
 ---
 
@@ -69,6 +69,19 @@
   `GCNWrapper`를 import한다. 0010 적용 여부에 따라 인자명이 `method`/`model` 중 무엇이 될지는
   후속 작업에서 그 시점의 최신 상태를 따른다.
 
+## 구현 결과
+
+이 플랜은 0010이 적용된 이후 상태에서 구현했다. 따라서 실제 경로는 `src/models/gcn/`이고
+아키텍처 인자는 `network=`이며, factory와 스크립트는 `model="gcn"` 문자열로 dispatch한다. ver1
+(`../260701_roi-corner-detection-ver1/src/models/gcn/`)의 구현을 참고하되, ver3의 컴포넌트 구조에
+맞게 다음을 변경했다.
+
+- backbone은 raw torchvision resnet 직접 사용 대신 `FeatureExtractor` + `CNNBackboneAdapter(keep_spatial=True, keep_stages=False)`로 통일했다. `custom`/`resnet`/`efficientnet`/`swin`/`vgg`/timm CNN을 지원하며 기본값은 `custom`이다.
+- 초기 추정 head는 `src/models/gcn/model.py`의 로컬 `InitHead`(stride conv x2 + AdaptiveAvgPool + Flatten + Linear)로 구현했다.
+- GCN 정제는 로컬 `GCNRefiner`로 구현하고, 4-순환 정규화 인접행렬은 `adjacency` 버퍼로 고정 등록했다. `iterations`, `num_layers`, `shared_weights`, `offset_radius`, `hidden_dim`을 `GCNModel` 생성자 인자로 노출했다.
+- 심층 감독 손실은 ver1의 wrapper 내부 override 대신 공유 컴포넌트 `DeepSupervisedSmoothL1Loss`로 추출해 `src/components/losses.py`에 추가했다. 표준 `BaseWrapper.compute_losses`가 `raw_output (N, T+1, 4, 2)`와 passthrough target `(N, 4, 2)`를 그대로 전달하므로 wrapper override가 필요 없다. 단계 가중치는 균등(`late_emphasis=False`)과 후기 강조(`late_emphasis=True`)를 모두 지원한다.
+- optimizer/scheduler는 `RidgeWrapper`와 동일한 2단계 warmup 패턴을 재사용했고, `scripts/config.py`의 `warmup_models`에 `gcn`을 추가했다.
+
 ## 범위
 
 포함 항목(후속 코드 작업 대상):
@@ -118,16 +131,10 @@
 
 ## 검증
 
-이 플랜은 문서 작성만 수행하는 Draft 단계이며, 코드 변경과 검증은 아직 수행하지 않았다. 후속
-작업에서 위 범위대로 구현한 뒤 다음을 이 섹션에 기록한다.
+구현 후 conda 환경 `pytorch_env`에서 다음을 확인했다.
 
-- import 검증: `PYTHONPATH=<project-root> python -c "import src.core.factory; import
-  src.methods.gcn.wrapper"` 오류 없음.
-- 단위 검증: 임의의 `(N, 3, 512, 512)` 이미지 배치와 `(N, 4, 2)` 정답 코너로 `GCNModel`
-  forward, `DeepSupervisedSmoothL1Loss` 계산, `GCNPostprocessor` 후처리가 shape 오류 없이
-  동작하는지 확인.
-- `iterations=1, 2, 3` 각각에서 반복이 늘수록(같은 초기값 기준) 검증 손실이 단조 개선되는지
-  개략 확인(부록 B의 "정제 상한" 논의와 연결).
-- 실제 학습 스크립트 실행(`scripts/train.py --method gcn` 또는 0010 적용 후 `--model gcn
-  --network custom --head gcn`)과 `PolygonIoU` 수치는 이 플랜 단계에서 수행하지 않으며 후속
-  작업에서 확인한다.
+- import 검증: `PYTHONPATH=<project-root> python -c "import src.core.factory; import src.models.gcn.wrapper"` 오류 없음.
+- 단위 검증: `(2, 3, 224, 224)` 이미지 배치와 `(2, 4, 2)` 정답 코너로 `network`가 `custom`과 `resnet18`일 때, `shared_weights`가 True와 False일 때 모두 `GCNModel.forward`가 `(2, 4, 4, 2)`(즉 $T+1=4$) shape를 반환했다. `DeepSupervisedSmoothL1Loss`가 균등/후기 강조 두 스킴에서 스칼라 손실과 backward를 정상 계산했고, `GCNPostprocessor`가 `(2, 4, 2)` 코너를 `[0, 1]` 범위로 반환했다.
+- 통합 검증: `get_wrapper(model="gcn", network="custom", head="gcn", warmup_epochs=1)`로 생성한 wrapper가 `on_fit_start`/`on_epoch_start`(backbone freeze 후 unfreeze) $\to$ `train_step` $\to$ `eval_step` $\to$ `predict_step`을 shape 오류 없이 수행했고 `predict_step`이 `(2, 4, 2)`를 반환했다.
+- 기존 method 회귀: `SegModel`/`RegModel`의 `custom` network 빌드와 forward가 backbone 목록 추가 후에도 그대로 동작함을 확인했다.
+- 실제 학습 스크립트 실행(`scripts/train.py --model gcn --network custom --head gcn`)과 `PolygonIoU` 수치, `iterations` 값별 정제 상한 분석은 이 플랜의 범위 밖이며 후속 작업에서 확인한다.

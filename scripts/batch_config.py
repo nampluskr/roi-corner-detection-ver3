@@ -56,9 +56,28 @@ RIDGE_CONFIGS = [
     # {"model": "ridge", "batch_size": 4, "max_epochs": 5, "network": "resnet50", "head": "ridge"},
     # {"model": "ridge", "batch_size": 4, "max_epochs": 5, "network": "efficientnet_b0", "head": "ridge"},
     # {"model": "ridge", "batch_size": 4, "max_epochs": 5, "network": "swin_t", "head": "ridge"},
-    {"model": "ridge", "batch_size": 4, "max_epochs": 5, "network": "vgg16", "head": "ridge"},
+    # {"model": "ridge", "batch_size": 4, "max_epochs": 5, "network": "vgg16", "head": "ridge"},
     # {"model": "ridge", "batch_size": 4, "max_epochs": 5, "network": "vgg19", "head": "ridge"},
     # {"model": "ridge", "batch_size": 4, "max_epochs": 5, "network": "wide_resnet50_2.tv_in1k", "head": "ridge"},
+]
+
+# gcn
+GCN_CONFIGS = [
+    # {"model": "gcn", "batch_size": 4, "max_epochs": 5, "network": "custom", "head": "gcn"},
+    # {"model": "gcn", "batch_size": 4, "max_epochs": 5, "network": "resnet18", "head": "gcn", "warmup_epochs": 1},
+    # {"model": "gcn", "batch_size": 4, "max_epochs": 5, "network": "resnet34", "head": "gcn"},
+    # {"model": "gcn", "batch_size": 4, "max_epochs": 5, "network": "resnet50", "head": "gcn"},
+    # {"model": "gcn", "batch_size": 4, "max_epochs": 5, "network": "efficientnet_b0", "head": "gcn"},
+    # {"model": "gcn", "batch_size": 4, "max_epochs": 5, "network": "vgg16", "head": "gcn"},
+]
+
+# hybrid
+HYBRID_CONFIGS = [
+    # {"model": "hybrid", "batch_size": 4, "max_epochs": 5, "network": "mobilenet_v3_large", "head": "hybrid", "warmup_epochs": 1},
+    # {"model": "hybrid", "batch_size": 4, "max_epochs": 5, "network": "custom", "head": "hybrid"},
+    # {"model": "hybrid", "batch_size": 4, "max_epochs": 5, "network": "resnet18", "head": "hybrid"},
+    # {"model": "hybrid", "batch_size": 4, "max_epochs": 5, "network": "resnet50", "head": "hybrid"},
+    {"model": "hybrid", "batch_size": 4, "max_epochs": 5, "network": "vgg16", "head": "hybrid"},
 ]
 
 # det
@@ -95,4 +114,4 @@ METHOD_COMPARISON_CONFIGS = [
     # {"model": "ridge", "batch_size": 4, "network": "custom", "head": "ridge", "test_size": 1000, "checkpoint": "outputs/public/ridge/custom_ridge/example/model.pth"},
 ]
 
-CONFIGS = REG_CONFIGS + SEG_CONFIGS + PEAK_CONFIGS + RIDGE_CONFIGS + DET_CONFIGS
+CONFIGS = REG_CONFIGS + SEG_CONFIGS + PEAK_CONFIGS + RIDGE_CONFIGS + GCN_CONFIGS + HYBRID_CONFIGS + DET_CONFIGS

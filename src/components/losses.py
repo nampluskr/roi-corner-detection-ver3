@@ -1,4 +1,4 @@
-# src/components/losses.py: BaseLoss and the concrete training losses (BCE/Dice/Focal/HeatmapMSE/SmoothL1/Wing)
+# src/components/losses.py: BaseLoss and the concrete training losses (BCE/Dice/BCEDice/DeepSupervisedSmoothL1/Focal/HeatmapMSE/SmoothL1/Wing)
 
 import math
 
@@ -65,6 +65,50 @@ class DiceLoss(BaseLoss):
         union = probs.sum(dim=1) + target.sum(dim=1)
         dice = (2.0 * intersection + self.smooth) / (union + self.smooth)
         return (1.0 - dice).mean()
+
+
+# --- combined BCE + soft Dice loss for mask logits ---
+
+class BCEDiceLoss(BaseLoss):
+    """Weighted sum of binary cross-entropy and soft Dice loss on mask logits against a binary mask target."""
+
+    def __init__(self, dice_weight=1.0, smooth=1.0, weight=1.0):
+        super().__init__(weight=weight)
+        self.dice_weight = dice_weight
+        self.smooth = smooth
+        self.bce = nn.BCEWithLogitsLoss()
+
+    def forward(self, raw_output, target):
+        bce = self.bce(raw_output, target)
+        probs = torch.sigmoid(raw_output).reshape(raw_output.shape[0], -1)
+        flat_target = target.reshape(target.shape[0], -1)
+        intersection = (probs * flat_target).sum(dim=1)
+        union = probs.sum(dim=1) + flat_target.sum(dim=1)
+        dice = (2.0 * intersection + self.smooth) / (union + self.smooth)
+        return bce + self.dice_weight * (1.0 - dice).mean()
+
+
+# --- deep-supervised smooth L1 loss for iterative corner refinement ---
+
+class DeepSupervisedSmoothL1Loss(BaseLoss):
+    """Weighted sum of per-step smooth L1 losses over (N, T+1, 4, 2) refinement corners against (N, 4, 2) targets."""
+
+    def __init__(self, beta=1.0, late_emphasis=False, weight=1.0):
+        super().__init__(weight=weight)
+        self.beta = beta
+        self.late_emphasis = late_emphasis
+
+    def forward(self, raw_output, target):
+        num_steps = raw_output.shape[1]
+        target = target.unsqueeze(1).expand_as(raw_output)
+        diff = (raw_output - target).abs()
+        per_element = torch.where(diff < self.beta, 0.5 * diff.pow(2) / self.beta, diff - 0.5 * self.beta)
+        per_step = per_element.mean(dim=(0, 2, 3))
+        if self.late_emphasis:
+            step_weight = torch.arange(1, num_steps + 1, device=raw_output.device, dtype=raw_output.dtype)
+        else:
+            step_weight = torch.ones(num_steps, device=raw_output.device, dtype=raw_output.dtype)
+        return (per_step * step_weight).sum() / step_weight.sum()
 
 
 # --- sigmoid focal loss for the sparse per-cell corner classification map ---

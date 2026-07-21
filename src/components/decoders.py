@@ -5,7 +5,7 @@ import torch.nn as nn
 from src.components.blocks import ConvBlock, DeconvBlock
 
 
-class SegDecoder(nn.Module):
+class UNetDecoder(nn.Module):
     """Upsamples the deepest encoder stage and adds shallower stages back in, low to high resolution."""
 
     def __init__(self, stage_channels, upsample="interpolate_conv"):
