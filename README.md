@@ -114,7 +114,8 @@ corner 순서는 `TL`, `TR`, `BR`, `BL`이고 값은 `[0,1]` normalized coordina
 
 current default CSV는 개발 환경의 absolute path이므로 다른 machine에서는 `--csv_path`를 명시해야 한다.
 schema, 여러 CSV 결합, 60:20:20 split과 transform은 [Dataset Format Guide](docs/guides/01-dataset-format.md)를
-참고한다.
+참고한다. data가 public, synthetic, measured 3단계로 구성되는 이유와 단계별 특성이 만드는 project
+제약은 [Data Strategy](docs/architecture/05-data-strategy.md)에서 다룬다.
 
 ## 6. Quick start training
 
