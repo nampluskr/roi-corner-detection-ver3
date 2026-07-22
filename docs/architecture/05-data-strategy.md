@@ -100,10 +100,11 @@ I(x, y) = A + B \cos\big(2\pi f (x \cos\theta + y \sin\theta) + \phi\big)
 $$
 
 여기서 $A$는 배경 밝기, $B$는 대비, $f$는 공간 주파수, $\theta$는 pattern 방향, $\phi$는 위상
-offset이다. 실제 계측 환경은 여러 위상을 순차 촬영하는 N-step phase-shifting을 사용하므로, 위상
-offset을 등간격 값 중에서 무작위로 고르면 학습 data가 실제 다채널 위상 편이 분포와 통계적으로
-유사해진다. 서로 다른 주파수 성분을 중첩하면 저주파와 고주파가 함께 존재해 합성과 실측 사이의 domain
-gap이 좁아진다.
+offset이다. 이 sinusoidal fringe 모델과 완만한 곡률, 불균일한 밝기 같은 시각적 특징은 phase measuring
+deflectometry(PMD) 참고 자료의 반사면 fringe 관찰에 근거한다. 실제 계측 환경은 여러 위상을 순차
+촬영하는 N-step phase-shifting을 사용하므로, 위상 offset을 등간격 값 중에서 무작위로 고르면 학습 data가
+실제 다채널 위상 편이 분포와 통계적으로 유사해진다. 서로 다른 주파수 성분을 중첩하면 저주파와 고주파가
+함께 존재해 합성과 실측 사이의 domain gap이 좁아진다.
 
 자동 label은 원근 변환에서 나온다. 정규화 단위 정사각형 $[0, 1]^2$ 위에 pattern을 그리면 네 꼭짓점은
 항상 $(0, 0)$, $(1, 0)$, $(1, 1)$, $(0, 1)$로 알려져 있다. 이 캔버스에 임의의 homography $H$를 적용해
@@ -153,6 +154,10 @@ $$
 이 예시 이미지는 도식이 아니라 변형 변수를 실제 값으로 설정해 그린 합성 결과다. 재생성 방법은
 `slides/README.md`에 정리되어 있다. 변수별 변형 개수를 차별 적용하는 방식은 7절의 offline
 pre-augmentation과 결합해 최종 표본 수와 분포를 결정한다.
+
+각 변수 계열의 파라미터 범위, 카메라 hole 가시성 제어, corner 레이블 정의, LabelMe JSON 규격, 생성
+파이프라인과 실행 방법 같은 실무 절차는 [Synthetic Generation Guide](../guides/05-synthetic-generation.md)에서
+다룬다.
 
 ## 7. Offline pre-augmentation과 online transform
 

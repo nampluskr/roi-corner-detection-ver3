@@ -25,6 +25,9 @@ outputs/
 *.pth
 *.pt
 
+# Synthetic dataset (large generated PNG/JSON, regenerate via data/make_synthetic_images.py)
+data/synthetic/
+
 # Notebook and editor state
 .ipynb_checkpoints/
 .vscode/

@@ -23,6 +23,12 @@ my-dataset/
 
 여러 dataset을 함께 사용할 때는 각 dataset에 CSV를 두고 `--csv_path`에 여러 경로를 전달할 수 있다.
 
+gt_corners.csv를 직접 작성하는 대신 raw 주석에서 변환할 수도 있다. `data/make_gt_corners.py`는
+`--dataset` 값으로 `smartdoc`, `midv2020`, `images`, `labelme`를 받아 각 형식을 이 CSV schema로
+변환한다. LabelMe 라이브러리로 레이블한 image와 JSON 폴더는 `labelme` parser를 사용하며, 하위 폴더까지
+재귀로 탐색한다. 합성 image와 LabelMe JSON을 생성하고 변환하는 전체 절차는 [Synthetic Generation Guide](05-synthetic-generation.md)에서
+다룬다.
+
 ## 2. Labeled CSV의 필수 column
 
 `CornerDataset`이 요구하는 header는 다음과 같다.

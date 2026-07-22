@@ -1,6 +1,7 @@
 # scripts/batch_run.py: batch runner for train via subprocess
 
 import argparse
+import importlib.util
 import os
 import subprocess
 import sys
@@ -10,14 +11,48 @@ if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
 from scripts.config import get_experiment, get_output_dir
-from scripts.batch_config import CONFIGS
 
-MODES = ["train", "evaluate", "predict"]
+DEFAULT_CONFIG_PATH = os.path.join(PROJECT_ROOT, "scripts", "batch_config.py")
+RUN_MODES = ["train", "evaluate", "predict"]
+MODES = RUN_MODES + ["all"]
 
 PASS_KEYS = [
     "network", "head", "device", "batch_size", "max_epochs", "num_workers",
     "train_size", "valid_size", "test_size", "checkpoint", "output_dir", "warmup_epochs",
 ]
+
+
+def resolve_config_path(path=None):
+    """Resolve a config file path from the working directory or project root."""
+    if path is None:
+        return DEFAULT_CONFIG_PATH
+    if os.path.isabs(path):
+        candidates = [path]
+    else:
+        candidates = [os.path.abspath(path), os.path.join(PROJECT_ROOT, path)]
+    for candidate in candidates:
+        if os.path.isfile(candidate):
+            return candidate
+    raise FileNotFoundError("batch config file not found: %s" % path)
+
+
+def load_configs(path=None):
+    """Load and return CONFIGS from a Python config file."""
+    config_path = resolve_config_path(path)
+    spec = importlib.util.spec_from_file_location("_batch_run_config", config_path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError("cannot create module spec for batch config: %s" % config_path)
+    module = importlib.util.module_from_spec(spec)
+    try:
+        spec.loader.exec_module(module)
+    except Exception as error:
+        raise RuntimeError("failed to load batch config %s: %s" % (config_path, error)) from error
+    if not hasattr(module, "CONFIGS"):
+        raise ValueError("batch config must define CONFIGS: %s" % config_path)
+    configs = module.CONFIGS
+    if not isinstance(configs, (list, tuple)):
+        raise TypeError("CONFIGS must be a list or tuple: %s" % config_path)
+    return list(configs)
 
 
 def get_cli_args(cfg, mode):
@@ -64,9 +99,20 @@ def main():
     """Parse runner args and execute configured experiments."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--mode", choices=MODES, default="train")
+    parser.add_argument(
+        "--config", type=str, default=None,
+        help="Python file defining CONFIGS (default: scripts/batch_config.py)")
     args = parser.parse_args()
 
-    results = run(args.mode, CONFIGS)
+    try:
+        configs = load_configs(args.config)
+    except (FileNotFoundError, RuntimeError, TypeError, ValueError) as error:
+        parser.error(str(error))
+
+    modes = RUN_MODES if args.mode == "all" else [args.mode]
+    results = []
+    for mode in modes:
+        results.extend(run(mode, configs))
     if any(not result["success"] for result in results):
         sys.exit(1)
 

@@ -6,12 +6,14 @@ import numpy as np
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.path import Path
 
 SIZE = 256
 OUT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
-def rounded_rect_mask(cx, cy, hw, hh, radius, rot_deg):
+def rounded_panel_mask(cx, cy, hw, hh, radius, rot_deg, top_ratio):
+    """Return a rounded trapezoid mask and its local coordinates."""
     ys, xs = np.mgrid[0:SIZE, 0:SIZE]
     rad = np.radians(rot_deg)
     cos_a, sin_a = np.cos(rad), np.sin(rad)
@@ -19,12 +21,39 @@ def rounded_rect_mask(cx, cy, hw, hh, radius, rot_deg):
     dy = ys - cy
     lx = cos_a * dx + sin_a * dy
     ly = -sin_a * dx + cos_a * dy
-    ax = np.abs(lx) - (hw - radius)
-    ay = np.abs(ly) - (hh - radius)
-    outside = np.sqrt(np.maximum(ax, 0) ** 2 + np.maximum(ay, 0) ** 2)
-    inside = np.minimum(np.maximum(ax, ay), 0)
-    dist = outside + inside - radius
-    return dist <= 0, (lx, ly)
+    if top_ratio == 1.0:
+        ax = np.abs(lx) - (hw - radius)
+        ay = np.abs(ly) - (hh - radius)
+        outside = np.sqrt(np.maximum(ax, 0) ** 2 + np.maximum(ay, 0) ** 2)
+        inside = np.minimum(np.maximum(ax, ay), 0)
+        dist = outside + inside - radius
+        return dist <= 0, (lx, ly)
+    tw = hw * top_ratio
+    vertices = np.array([[-tw, -hh], [tw, -hh], [hw, hh], [-hw, hh]], dtype=float)
+    rounded = []
+    codes = []
+    count = len(vertices)
+    for index, vertex in enumerate(vertices):
+        following = vertices[(index + 1) % count]
+        outgoing = vertex + (following - vertex) * min(radius / np.linalg.norm(following - vertex), 0.5)
+        if index == 0:
+            rounded.append(outgoing)
+            codes.append(Path.MOVETO)
+        next_vertex = vertices[(index + 1) % count]
+        next_following = vertices[(index + 2) % count]
+        next_incoming = next_vertex + (vertex - next_vertex) * min(
+            radius / np.linalg.norm(vertex - next_vertex), 0.5
+        )
+        next_outgoing = next_vertex + (next_following - next_vertex) * min(
+            radius / np.linalg.norm(next_following - next_vertex), 0.5
+        )
+        rounded.extend([next_incoming, next_vertex, next_outgoing])
+        codes.extend([Path.LINETO, Path.CURVE3, Path.CURVE3])
+    rounded.append(rounded[0])
+    codes.append(Path.CLOSEPOLY)
+    path = Path(np.array(rounded), codes)
+    points = np.column_stack([lx.ravel(), ly.ravel()])
+    return path.contains_points(points).reshape(SIZE, SIZE), (lx, ly)
 
 
 def corner_points(cx, cy, hw, hh, rot_deg, top_ratio):
@@ -45,7 +74,7 @@ def render_panel(cx=128, cy=128, hw=78, hh=54, radius=10, rot_deg=0.0, top_ratio
     ys, xs = np.mgrid[0:SIZE, 0:SIZE]
     xn = xs / SIZE
     yn = ys / SIZE
-    mask, (lx, ly) = rounded_rect_mask(cx, cy, hw, hh, radius, rot_deg)
+    mask, (lx, ly) = rounded_panel_mask(cx, cy, hw, hh, radius, rot_deg, top_ratio)
     background = bg_mean + bg_gradient * (xn - 0.5) + 0.03 * np.sin(2 * np.pi * (xn + yn))
     axis = ly if fringe_dir == "horizontal" else lx
     warped = axis / SIZE + bow * ((ly / SIZE) ** 2)

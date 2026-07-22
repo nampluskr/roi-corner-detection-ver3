@@ -301,10 +301,45 @@ python scripts/train.py \
 python scripts/batch_run.py --mode train
 python scripts/batch_run.py --mode evaluate
 python scripts/batch_run.py --mode predict
+python scripts/batch_run.py --mode all
 ```
 
 train mode는 각 command에 `--save`를 자동 추가한다. evaluate와 predict는 config에 checkpoint가 없으면
 config로 계산한 default output 아래 `model.pth`를 찾는다.
+
+`all` mode는 전체 config의 train을 실행한 뒤 전체 config의 evaluate, predict를 순서대로
+실행한다. 개별 config가 실패해도 나머지 config와 후속 mode를 계속 실행하며, 하나라도
+실패하면 최종 exit code는 1이다.
+
+기본 `scripts/batch_config.py` 대신 `CONFIGS`를 정의한 별도 Python 파일을 사용할 때는
+`--config`로 path를 지정한다.
+
+```python
+# configs/smoke_config.py
+
+CONFIGS = [
+    {
+        "model": "reg",
+        "network": "custom",
+        "head": "gap",
+        "batch_size": 2,
+        "max_epochs": 1,
+        "train_size": 8,
+        "valid_size": 4,
+        "test_size": 4,
+        "num_workers": 0,
+    },
+]
+```
+
+```bash
+python scripts/batch_run.py --mode train --config configs/smoke_config.py
+python scripts/batch_run.py --mode all --config /absolute/path/to/full_config.py
+```
+
+상대 path는 current working directory에서 먼저 찾고, 없으면 project root 기준으로 찾는다. 지정한
+Python 파일은 top-level `CONFIGS`를 list 또는 tuple로 정의해야 한다. `--config`를 생략하면
+기존 `scripts/batch_config.py`를 사용한다.
 
 batch runner가 전달하는 key는 `PASS_KEYS`에 제한된다. 현재 `csv_path`, `dataset`, `seed`, `image_size`는
 dictionary에 넣더라도 command로 전달되지 않는다. 이 값이 필요한 batch experiment는 runner 변경이 먼저
