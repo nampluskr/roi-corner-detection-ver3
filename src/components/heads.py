@@ -7,7 +7,7 @@ from src.components.blocks import ConvBlock
 
 # --- predicts flattened corner coordinates from CNN features ---
 
-class CoordGapHead(nn.Module):
+class GapHead(nn.Module):
     """Dropout followed by a linear projection from a global feature to 8 raw corner values."""
 
     def __init__(self, in_channels, dropout=0.2):
@@ -19,7 +19,7 @@ class CoordGapHead(nn.Module):
         return self.fc(self.dropout(global_feature))
 
 
-class CoordSpatialHead(nn.Module):
+class SpatialHead(nn.Module):
     """Strided convolutions and pooling followed by a linear projection to 8 raw corner values."""
 
     def __init__(self, in_channels, dropout=0.2):

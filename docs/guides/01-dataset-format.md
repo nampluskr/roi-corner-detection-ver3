@@ -132,11 +132,11 @@ python scripts/train.py \
 방식이 아니다. 특정 source dataset의 비율을 split마다 정확히 보장해야 한다면 current factory만으로는
 stratified split을 제공하지 않으므로 별도 구현이 필요하다.
 
-## 7. Default CSV에 의존하지 않기
+## 7. Default CSV와 명시적 CSV
 
-`scripts/config.py`에는 현재 개발 환경의 absolute default CSV path가 들어 있다. 다른 machine이나
-workspace에서는 존재하지 않을 수 있다. 처음 실행할 때는 자신의 dataset을 `--csv_path`로 명시하는 것을
-권장한다.
+`scripts/config.py`의 default CSV path는 repository 내부 public dataset CSV를 가리킨다. 기본값은
+`data/public/smartdoc/gt_corners.csv`와 `data/public/midv2020/gt_corners.csv`다. 다른 dataset으로 실행할
+때는 자신의 dataset을 `--csv_path`로 명시한다.
 
 ```bash
 python scripts/train.py \
@@ -164,7 +164,7 @@ split 뒤에는 size limit을 적용할 수 있다.
 
 | option | 적용 대상 | 기본값 |
 | --- | --- | ---: |
-| `--train_size` | 60% train subset | `2000` |
+| `--train_size` | 60% train subset | `5000` |
 | `--valid_size` | 20% valid subset | `1000` |
 | `--test_size` | 20% test subset | `1000` |
 

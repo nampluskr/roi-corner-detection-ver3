@@ -55,7 +55,6 @@ center 감독이 지배적이 되어 point 방식에 가까워진다.
 - `DetModel`(`det` method)의 기존 box/point 동작은 변경하지 않는다.
 - 세 wrapper의 preprocessor와 postprocessor 로직 자체는 변경하지 않는다. `box_size`를 어떻게
   결정하는지만 wrapper에서 조정한다.
-- ver2의 동일 구현은 참고 전용이며 수정하지 않는다.
 - `docs/README.md`는 이 프로젝트 재구성 workflow 자체의 최상위 색인이며 method별 구현 세부사항을
   담는 문서가 아니므로 수정하지 않는다. 이 plan 문서 자체가 이 변경의 canonical 근거다.
 

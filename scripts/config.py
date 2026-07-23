@@ -1,15 +1,21 @@
 # scripts/config.py: default training configuration and argument parsing
 
 import os
+import sys
+
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+
 import argparse
 
-VER1_DATA_DIR = "/mnt/d/projects/nampluskr/00_review/260701_roi-corner-detection-ver1/data"
+DATA_DIR = os.path.join(PROJECT_ROOT, "data")
 
 DEFAULTS = dict(
-    data_dir=VER1_DATA_DIR,
+    data_dir=DATA_DIR,
     csv_path=[
-        os.path.join(VER1_DATA_DIR, "smartdoc", "gt_corners.csv"),
-        os.path.join(VER1_DATA_DIR, "midv2020", "gt_corners.csv"),
+        os.path.join(DATA_DIR, "public", "smartdoc", "gt_corners.csv"),
+        os.path.join(DATA_DIR, "public", "midv2020", "gt_corners.csv"),
     ],
     seed=42,
     dataset="public",
@@ -22,7 +28,7 @@ DEFAULTS = dict(
     patience=3,
     warmup_epochs=1,
     num_workers=4,
-    train_size=2000,    # None: all train samples
+    train_size=5000,    # None: all train samples
     valid_size=1000,    # None: all valid samples
     test_size=1000,     # None: all test samples
 )

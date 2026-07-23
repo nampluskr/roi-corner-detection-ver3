@@ -4,18 +4,18 @@
 | --- | --- |
 | 상태 | Done |
 | 작성일 | 2026-07-21 |
-| 적용 범위 | ver3 `src/components/` 신규, `src/core/evaluator.py` import 갱신 |
+| 적용 범위 | `src/components/` 신규, `src/core/evaluator.py` import 갱신 |
 | 관련 문서 | [../README.md](../README.md), [../CLAUDE.md](../CLAUDE.md), [0003-src-core-data-utils-plan.md](0003-src-core-data-utils-plan.md) |
 
 ## 1. 목적과 배경
 
-ver2의 재사용 구성요소는 여러 하위 폴더에 파일 단위로 흩어져 있다. `src/losses/`(7개 파일),
+초기 재사용 구성요소는 여러 하위 폴더에 파일 단위로 흩어져 있다. `src/losses/`(7개 파일),
 `src/metrics/`(4개 파일), 그리고 `src/models/` 아래 모델을 "조합"하는 building-block 모듈들
 (`heads/`, `backbones/`, `adapters/`, `necks/`, `blocks/`, `features.py`)이다. 이 폴더 계층은
 빈 `__init__.py`에 전부 full-path import(`from src.models.blocks.conv_block import ConvBlock`)로만
 연결되어 있어, 파일 수에 비해 얻는 격리 이점이 적다.
 
-ver3에서는 이 재사용 구성요소를 도메인별 단일 모듈로 flatten 하여 `src/components/` 아래에 모은다.
+이 작업에서는 이 재사용 구성요소를 도메인별 단일 모듈로 flatten 하여 `src/components/` 아래에 모은다.
 이렇게 하면 `src.components.losses`, `src.components.backbones`처럼 도메인 단위로 import 되고,
 후속 모델 재구성 plan에서 조립 대상(reg/seg/heatmap/det, `models/base/`)과 조립 재료(components)가
 경로상 명확히 분리된다.
@@ -23,13 +23,12 @@ ver3에서는 이 재사용 구성요소를 도메인별 단일 모듈로 flatte
 주 재구성 대상인 `XXXModel`/`XXXWrapper`(`src/models/reg|seg|heatmap|det`, `models/base/`)는 이
 plan의 범위가 아니며 후속 plan에서 다룬다. 이 plan은 그 모델들이 조립에 쓰는 공용 재료만 확립한다.
 
-ver2 내부 파일은 참고·읽기 전용이므로([../CLAUDE.md](../CLAUDE.md)) 결과는 ver3 내부에만 생성했으며,
-ver2에는 어떤 변경도 가하지 않았다.
+결과는 현재 repository 내부에 생성했다.
 
 ## 2. 범위
 
 포함:
-- `src/components/__init__.py` 신규(빈 파일, ver2의 빈 `__init__` 관례 유지)
+- `src/components/__init__.py` 신규(빈 파일)
 - 아래 8개 flatten 모듈 신규 생성
 - `src/core/evaluator.py`의 metrics import 3줄 갱신
 
@@ -40,10 +39,10 @@ ver2에는 어떤 변경도 가하지 않았다.
 
 ## 3. flatten 매핑
 
-각 대상 모듈은 여러 ver2 파일을 의존 순서대로 이어붙여 만든다. 같은 파일 안으로 병합된 클래스에
+각 대상 모듈은 여러 source 파일을 의존 순서대로 이어붙여 만든다. 같은 파일 안으로 병합된 클래스에
 대한 intra import는 제거하고, 다른 component를 가리키는 cross import는 새 경로로 재작성한다(§4).
 
-| ver3 신규 (`src/components/`) | ver2 원본 (`src/`) | 병합 순서(선행 → 후행) |
+| 신규 구성 (`src/components/`) | 기존 구성 (`src/`) | 병합 순서(선행 -> 후행) |
 | --- | --- | --- |
 | `losses.py` | `losses/*.py` | base_loss → bce/dice/focal/heatmap_mse/smoothl1/wing |
 | `metrics.py` | `metrics/*.py` | base_metric → corner_distance → polygon_iou → success_rate |
@@ -113,23 +112,22 @@ from src.components.metrics import SuccessRate
 
 ## 6. 미해결 의존 (후속 plan 대상)
 
-- `src/models/reg|seg|heatmap|det`의 model/wrapper는 아직 ver3에 없다. 이 파일들이 이관될 때
+- `src/models/reg|seg|heatmap|det`의 model/wrapper는 아직 없다. 이 파일들이 이관될 때
   `from src.models.blocks...` / `from src.models.features...` / `from src.losses...` /
   `from src.metrics...` import를 모두 `from src.components.*`로 재작성한다(§4의 규칙 재사용).
 - `src/core/factory.py`의 지연 import(`src.models.*`)는 모델 이관 plan에서 해소한다(0003 §4와 동일).
 
 ## 7. 완료 기준
 
-- `src/components/`에 `__init__.py`와 8개 flatten 모듈이 존재하고, 각 모듈이 대응 ver2 원본의
+- `src/components/`에 `__init__.py`와 8개 flatten 모듈이 존재하고, 각 모듈이 대응 source의
   모든 최상위 정의/상수를 담을 것 — 충족
 - 병합 파일 내 intra import가 남아있지 않고, cross import는 전부 `src.components.*` 경로일 것 — 충족
 - `src/core/evaluator.py`가 `src.components.metrics`를 참조할 것 — 충족
 - ver3에 `src/losses/`, `src/metrics/`, `src/models/`(building-block 부분)는 새로 만들지 않을 것 — 충족
-- ver2 파일은 하나도 수정되지 않을 것 — 충족
 
 ## 8. 검증
 
-실행 환경은 conda `pytorch_env`(ver2 CLAUDE.md §5)를 사용한다.
+실행 환경은 conda `pytorch_env`를 사용한다.
 
 - **컴파일**: `python -m py_compile src/components/*.py src/core/evaluator.py` → 전체 통과.
 - **import 스모크**:

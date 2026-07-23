@@ -370,7 +370,7 @@ python scripts/train.py --model peak --network custom --head peak --save
 Gaussian ridge model은 다음과 같이 실행한다.
 
 ```bash
-python scripts/train.py --model ridge --network resnet18 --head ridge --save
+python scripts/train.py --model ridge --network resnet18 --head pcaline --save
 ```
 
 같은 ridge model을 인접 채널 곱 4-peak postprocess로 실행하려면 head를 `peakprod`로 지정한다.
@@ -379,7 +379,7 @@ python scripts/train.py --model ridge --network resnet18 --head ridge --save
 python scripts/train.py --model ridge --network custom --head peakprod --save
 ```
 
-`peak`의 head 이름은 고정되어 있고, `ridge`는 `ridge`와 `peakprod` 두 head를 지원한다. `peakprod`는
+`peak`의 head 이름은 고정되어 있고, `ridge`는 `pcaline`과 `peakprod` 두 head를 지원한다. `peakprod`는
 target과 loss를 `ridge`와 공유하고 postprocessor만 다르므로 학습된 checkpoint를 그대로 두 head로
 복원해 비교할 수 있다. network를 비교할 때 output stride가 달라지면 map resolution과 target sigma도
 함께 달라진다는 점을 기록한다.

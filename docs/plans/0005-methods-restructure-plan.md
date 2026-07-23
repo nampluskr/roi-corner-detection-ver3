@@ -5,19 +5,19 @@
 | 상태 | Done |
 | 작성일 | 2026-07-21 |
 | 완료일 | 2026-07-21 |
-| 적용 범위 | ver3 `src/methods/` 신규, `src/components/decoders.py` 신규, `src/core/factory.py`·`scripts/config.py` 갱신 |
+| 적용 범위 | `src/methods/` 신규, `src/components/decoders.py` 신규, `src/core/factory.py`·`scripts/config.py` 갱신 |
 | 관련 문서 | [../README.md](../README.md), [../CLAUDE.md](../CLAUDE.md), [0004-components-flatten-plan.md](0004-components-flatten-plan.md) |
 | 선행 | 0004 (components flatten) 완료 |
 
 ## 1. 목적과 배경 (Context)
 
-ver2의 모델 계층(`src/models/`)은 아직 ver3로 이관되지 않았다(0003 §4의 "미해결 의존"). 이 계층은
+초기 모델 계층(`src/models/`)은 아직 정리되지 않았다(0003 §4의 "미해결 의존"). 이 계층은
 task(reg/seg/det/heatmap)별 폴더 안에 여러 assembly 변형(composable backbone 모델과 외부 whole-model)이
 섞여 있다. 예를 들어 `seg/model.py`에 `SegModel`(backbone 조립형)과 `TorchSegModel`(torchvision 외부 모델)이,
 `det/model.py`에 `DetModel/TorchDetModel/YoloDetModel/DetrDetModel` 4종이 한 파일에 공존한다. CLI는
 `--method det --model yolov8n`처럼 `model` 문자열을 sniffing 해 변형을 고른다(factory `get_wrapper`).
 
-ver3에서는 assembly 변형 자체를 method로 승격해 `src/methods/<method>/`로 1:1 분리한다. 각 method
+이 작업에서는 assembly 변형 자체를 method로 승격해 `src/methods/<method>/`로 1:1 분리한다. 각 method
 폴더는 `model.py`, `wrapper.py`, `preprocessor.py`, `postprocessor.py`로 구성되어 자기 완결적이며,
 factory는 `model` sniffing 없이 `method` 문자열만으로 dispatch 한다. 조립 재료는 0004에서 확립한
 `src/components/*`(SSOT)를 import 한다.
@@ -30,30 +30,30 @@ factory는 `model` sniffing 없이 `method` 문자열만으로 dispatch 한다. 
   특수케이스를 제거한다. 이후 synthetic/measured 데이터 학습 시 이전에 학습된(custom 포함) 가중치를 불러와
   초기에 backbone을 freezing 할 수 있어야 하기 때문이다.
 
-ver2 내부 파일은 참고와 읽기 전용이므로([../CLAUDE.md](../CLAUDE.md)) 결과는 ver3에만 생성하며 ver2는 변경하지 않는다.
+결과는 현재 repository 내부에만 생성한다.
 
 ## 2. 최종 method 구성
 
 `src/methods/` 아래 9개 폴더(base와 8 method)를 둔다. 각 폴더는 빈 `__init__.py`와 아래 파일을 갖는다.
 
-| method | 폴더 파일 | 주요 클래스 | ver2 출처 |
+| method | 폴더 파일 | 주요 클래스 | 기존 구성 |
 | --- | --- | --- | --- |
 | base | base_model/base_wrapper/base_preprocessor/base_postprocessor | `BaseModel`,`BaseWrapper`,`BasePreprocessor`,`BasePostprocessor` | `models/base/*` |
 | reg | model/wrapper/preprocessor/postprocessor | `RegModel`(통합),`RegWrapper`,`RegPreprocessor`,`RegPostprocessor` | `models/reg/*` |
 | seg | 〃 | `SegModel`,`SegWrapper`,`SegPreprocessor`,`SegPostprocessor` | `models/seg/*` (SegModel 부분) |
 | det | 〃 | `DetModel`,`DetWrapper`,`DetPreprocessor`,`DetPostprocessor` | `models/det/*` (DetModel 부분) |
-| heatmap | 〃 | `HeatmapModel`,`HeatmapWrapper`,`HeatmapPreprocessor`,`HeatmapPostprocessor` | `models/heatmap/*` (ver2 방식 그대로) |
+| heatmap | 〃 | `HeatmapModel`,`HeatmapWrapper`,`HeatmapPreprocessor`,`HeatmapPostprocessor` | `models/heatmap/*` |
 | torchseg | 〃 | `TorchSegModel`,`TorchSegWrapper`, seg mask pre/post 재사용 | `models/seg/*` (TorchSegModel 부분) |
 | torchdet | 〃 | `TorchDetModel`,`TorchDetWrapper`,`TorchDetPreprocessor`,`TorchDetPostprocessor` | `models/det/*` (TorchDet 부분) |
 | yolo | 〃 | `YoloModel`,`YoloWrapper`,`YoloPreprocessor`,`YoloPostprocessor` | `models/det/*` (YoloDet 계열, 이름에서 "Det" 제거) |
 | detr | 〃 | `DetrModel`,`DetrWrapper`,`DetrPreprocessor`,`DetrPostprocessor` | `models/det/*` (DetrDet 계열, 이름에서 "Det" 제거) |
 
-또한 `src/components/decoders.py`를 신규로 만들어 ver2의 segmentation decoder 구현을 `UNetDecoder`로 이동한다.
+또한 `src/components/decoders.py`를 신규로 만들어 segmentation decoder 구현을 `UNetDecoder`로 이동한다.
 seg와 heatmap model이 공유하므로 조립 재료(components SSOT)로 승격한다.
 
 ## 3. RegModel 통합 상세
 
-`methods/reg/model.py`는 ver2의 `_build_extractor_and_head` 헬퍼를 유지하고, 단일 `RegModel(BaseModel)`로
+`methods/reg/model.py`는 `_build_extractor_and_head` 헬퍼를 유지하고, 단일 `RegModel(BaseModel)`로
 통합한다. `SegModel`의 backbone 분기 패턴을 그대로 따른다.
 
 ```python
@@ -71,7 +71,7 @@ class RegModel(BaseModel):
             raise ValueError(...)   # ("custom",) + SUPPORTED_BACKBONES + SUPPORTED_TIMM_BACKBONES
         self.head_name = head
         self.extractor, self.head = _build_extractor_and_head(encoder, backbone, is_vit, head, dropout)
-    # forward(): ver2와 동일 (gap -> global_feature, spatial -> spatial_feature)
+        # forward(): gap -> global_feature, spatial -> spatial_feature
 ```
 
 `CustomRegModel`과 `TorchRegModel`은 없앤다. `RegWrapper.build_model`도 `RegModel(...)` 단일 생성으로 대체한다.
@@ -86,17 +86,17 @@ class RegModel(BaseModel):
 - `build_optimizer(phase)`는 `SegWrapper.build_optimizer` 패턴으로 통일한다. `warmup_epochs>0`이면
   phase1은 non-backbone만, phase2는 extractor(1e-5)와 non-backbone(1e-4)으로 구성한다. `warmup_epochs==0`이면
   `AdamW(model.parameters(), lr=1e-4)`로 custom from-scratch 기존 동작을 보존한다.
-- det: ver2 `DetWrapper`는 warmup을 쓰지 않고 2-group 고정이었다. 이번에 seg 패턴과 동일하게
+- det: 기존 `DetWrapper`는 warmup을 쓰지 않고 2-group 고정이었다. 이번에 seg 패턴과 동일하게
   `build_optimizer(phase)`와 `applied_warmup_epochs=warmup_epochs`를 도입해 custom warmup을 지원한다.
-- torchseg/torchdet/yolo/detr는 ver2 warmup 동작을 그대로 유지한다(외부 whole-model, custom backbone 개념 없음).
+- torchseg/torchdet/yolo/detr는 기존 warmup 동작을 유지한다(외부 whole-model, custom backbone 개념 없음).
   torchdet/yolo/detr는 이미 `get_backbone_module`/`get_backbone_layers` override로 warmup을 지원하고, torchseg는
-  ver2대로 warmup을 비활성(flat AdamW)한다.
+  기존 방식대로 warmup을 비활성(flat AdamW)한다.
 
 ## 5. import 재작성 규칙 (모든 method 파일 공통)
 
 0004의 components 경로와 신규 methods/decoders 경로로 일괄 치환한다.
 
-| ver2 경로 | ver3 경로 |
+| 기존 경로 | 신규 경로 |
 | --- | --- |
 | `src.models.base.base_*` | `src.methods.base.base_*` |
 | `src.models.backbones.*` | `src.components.backbones` |
@@ -105,7 +105,7 @@ class RegModel(BaseModel):
 | `src.models.necks.multi_scale_neck` | `src.components.necks` |
 | `src.models.heads.*` | `src.components.heads` |
 | `src.models.blocks.*` | `src.components.blocks` |
-| ver2 segmentation decoder module | `src.components.decoders` |
+| segmentation decoder module | `src.components.decoders` |
 | `src.losses.*` | `src.components.losses` |
 | `src.metrics.*` | `src.components.metrics` |
 | `src.models.<method>.<x>` | `src.methods.<method>.<x>` |
@@ -139,11 +139,9 @@ CLI 사용법이 바뀌어 외부 모델은 이제 `--method torchseg --model fc
 exp/dir 이름 로직(`get_experiment`/`get_model_name`)은 `model or backbone` 기반이라 그대로 동작한다.
 `scripts/batch_config.py`가 구 `(method=seg, model=fcn_resnet50)` 매핑을 열거하면 새 taxonomy로 갱신한다(구현 시 확인).
 
-## 7. 코드 작성 규칙과 Python 경로 (ver2 지침 반영)
+## 7. 코드 작성 규칙과 Python 경로
 
-ver2 지침 파일(`../../../260712_roi-corner-detection-ver2/CLAUDE.md` §4 코드 작성 규칙, §5 실행 환경)의
-내용은 ver3 [../../CLAUDE.md](../../CLAUDE.md) §3, §4, §5에 이미 반영되어 있으며, 이 plan의 모든 신규 Python
-파일은 아래를 따른다.
+프로젝트 지침의 코드 작성 규칙과 실행 환경을 따르며, 이 plan의 모든 신규 Python 파일은 아래를 따른다.
 
 - 식별자, 주석, docstring, 문자열에 한국어를 사용하지 않는다.
 - 모든 파일 첫 줄은 `# src/methods/<method>/<file>.py: one-line description` 형식으로 쓰고, 그 다음 빈 줄
@@ -154,7 +152,7 @@ ver2 지침 파일(`../../../260712_roi-corner-detection-ver2/CLAUDE.md` §4 코
 - `src/` 내부 import는 `src.xxx` absolute import를 쓴다(`src.components.*`, `src.methods.*`,
   `src.methods.base.*`).
 
-Python 실행과 검증은 conda `pytorch_env`에서 ver3 project root
+Python 실행과 검증은 conda `pytorch_env`에서 project root
 (`/mnt/d/projects/nampluskr/00_review/260720_roi-corner-detection-ver3`)를 기준으로 수행한다. `python -c`
 같이 script의 `sys.path` 보정이 없는 명령은 `PYTHONPATH`에 project root를 포함한다.
 
@@ -171,7 +169,6 @@ PYTHONPATH=/mnt/d/projects/nampluskr/00_review/260720_roi-corner-detection-ver3 
 - reg/seg/det/heatmap이 custom backbone에서도 `warmup_epochs>0`일 때 freeze 후 unfreeze로 동작한다.
 - `src/components/decoders.py`에 `UNetDecoder`가 있고 seg와 heatmap이 이를 import 한다.
 - factory가 `method`만으로 8개 wrapper를 dispatch 하고 `src.models.*` 참조 잔존이 없다.
-- ver2 파일은 하나도 변경되지 않는다.
 
 ## 9. 검증 (conda `pytorch_env`)
 
@@ -212,4 +209,3 @@ conda `pytorch_env`에서 아래 항목을 확인했다.
   구성은 로컬 가중치가 있을 때만 별도 확인한다).
 - 잔여 참조: `grep -rn --include=*.py -E "src\.models\.|src\.(losses|metrics)\b" src/ scripts/`
   결과가 비어 있음을 확인했다.
-- ver2 파일은 변경하지 않았다.

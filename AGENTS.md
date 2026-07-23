@@ -4,9 +4,8 @@
 
 ## 1. Canonical project design
 
-이 프로젝트는 `260712_roi-corner-detection-ver2`와 `260701_roi-corner-detection-ver1`의 폴더와
-파일 구성을 참고해 재구성한 결과를 확립하는 workspace다. ver1과 ver2의 SSOT/canonical 문서는
-참고 자료로만 사용하며, ver3의 구속력 있는 기준은 ver3 내 문서와 구현 결과로 확립한다.
+이 프로젝트는 ROI corner detection을 위한 독립 workspace다. 구속력 있는 기준은 현재 repository의
+문서와 구현 결과로 확립한다.
 
 현재 ver3의 문서 기준은 다음과 같다.
 
@@ -15,14 +14,6 @@
 | `README.md` | canonical | 프로젝트 현재 상태, model 구성, CLI와 산출물 경로 기준 |
 | `docs/README.md` | canonical | 문서 색인과 후속 문서 작업 절차 |
 | `docs/plans/*.md` | history | 작업 계획과 완료 이력 |
-
-참고 경로는 다음과 같다.
-
-- ver1 프로젝트: `../260701_roi-corner-detection-ver1/`
-- ver2 프로젝트: `../260712_roi-corner-detection-ver2/`
-- ver2 기존 SSOT: `../260712_roi-corner-detection-ver2/docs/architecture/model-assembly.md`
-
-ver1과 ver2 내부 파일은 참고와 읽기 전용으로만 사용하며 직접 수정하지 않는다.
 
 ## 2. 작업 범위와 산출물
 

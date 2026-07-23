@@ -88,7 +88,7 @@ pretrained network는 source에 등록된 local weight를 사용한다. registry
 ### 5.1 `gap` head
 
 `gap`은 global feature를 사용한다. CNN에서는 final feature map에 global average pooling을 적용하고,
-transformer에서는 class token을 사용한다. `CoordGapHead`는 dropout 뒤에 하나의 linear layer를 적용한다.
+transformer에서는 class token을 사용한다. `GapHead`는 dropout 뒤에 하나의 linear layer를 적용한다.
 
 ```text
 feature map -> global average pooling -> vector -> dropout -> linear(8)
@@ -100,7 +100,7 @@ feature map -> global average pooling -> vector -> dropout -> linear(8)
 ### 5.2 `spatial` head
 
 `spatial`은 위치가 남아 있는 feature map을 사용한다. CNN은 final feature map을 그대로 전달하고,
-transformer는 patch token을 다시 2D grid로 reshape한다. `CoordSpatialHead`는 두 번의 strided convolution,
+transformer는 patch token을 다시 2D grid로 reshape한다. `SpatialHead`는 두 번의 strided convolution,
 `4 x 4` adaptive pooling, dropout, linear projection을 사용한다.
 
 ```text

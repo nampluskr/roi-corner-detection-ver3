@@ -63,6 +63,21 @@ public 단계는 표본 수가 많고 물체 종류가 다양하지만 검사 do
 따라서 corner를 찾는 일반 능력을 학습하기에는 적합하지만, 이 단계만으로는 목표 domain 성능을 보장하지
 못한다.
 
+public 단계의 대표 dataset은 SmartDoc과 MIDV2020이다. SmartDoc은 촬영된 문서 image에서 document
+quadrilateral의 네 corner를 제공하고, MIDV2020은 카드와 ID 문서 image에서
+대상 문서의 네 corner를 제공한다. 두 dataset은 원본 annotation 형식이 다르더라도 ver3에서 사용할 때는
+`gt_corners.csv`의 normalized `[0, 1]` 좌표와 `TL`, `TR`, `BR`, `BL` 순서로 맞춘다. 즉 public 단계의
+역할은 특정 검사 texture를 학습하는 것이 아니라, 다양한 촬영 배경과 원근 조건에서 사각형 ROI의 네 점을
+안정적으로 찾는 일반 능력을 먼저 확보하는 것이다.
+
+public dataset의 실제 예시는 slide 자산에 있다. 각 image는 원본 sample 위에 표준 순서 corner 네 점과
+polygon line을 overlay한 결과다.
+
+| dataset | 예시 이미지 |
+| --- | --- |
+| SmartDoc | `slides/assets/public_smartdoc_example.png` |
+| MIDV2020 | `slides/assets/public_midv2020_example.png` |
+
 synthetic 단계는 fringe pattern을 수식으로 생성하므로 표본을 대량으로 만들 수 있고, 생성에 사용한
 변환 parameter로부터 corner 좌표를 오차 없이 자동으로 얻는다. 그러나 합성 image와 실측 image 사이에는
 domain gap이 존재하므로, 다중 위상과 다중 주파수를 섞어 실측 분포에 가깝게 만든다.

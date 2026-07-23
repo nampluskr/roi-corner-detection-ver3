@@ -46,7 +46,7 @@ peak를 이루므로 NMS 없이 4개 봉우리가 안정적으로 잡힌다. 이
 - ridge model, preprocessor, loss, metric은 수정하지 않는다.
 - 별도 신규 model package로 분리하지 않는다. ridge의 head 변형으로 유지한다.
 - slides 반영은 이번 범위에서 제외한다.
-- ver1과 ver2는 읽기 전용 참조만 한다.
+- 현재 repository 내부 파일만 변경한다.
 
 ## 3. 설계
 

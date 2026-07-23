@@ -201,7 +201,7 @@ RegWrapper
 -> RegModel
    -> CustomBackbone
    -> CNNBackboneAdapter(global only)
-   -> CoordGapHead
+   -> GapHead
 -> RegPreprocessor
 -> RegPostprocessor
 -> WingLoss

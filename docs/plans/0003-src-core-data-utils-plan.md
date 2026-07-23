@@ -4,22 +4,18 @@
 | --- | --- |
 | 상태 | Done |
 | 작성일 | 2026-07-20 |
-| 적용 범위 | ver3 `src/__init__.py`, `src/core/`, `src/data/`, `src/utils/` |
+| 적용 범위 | `src/__init__.py`, `src/core/`, `src/data/`, `src/utils/` |
 | 관련 문서 | [../README.md](../README.md), [../CLAUDE.md](../CLAUDE.md), [0002-experiments-into-scripts-plan.md](0002-experiments-into-scripts-plan.md) |
 
 ## 1. 목적과 배경
 
-이 프로젝트의 주된 재구성 대상은 ver2의 `XXXModel`/`XXXWrapper`와 그 관련 구성요소
-(`src/models/`, 및 그 의존인 `src/losses/`, `src/metrics/`)다. 그 외 코드는 재구성하지 않고
-ver2 원본을 그대로 이관한다.
+이 프로젝트의 주된 재구성 대상은 `XXXModel`/`XXXWrapper`와 그 관련 구성요소
+(`src/models/`, 및 그 의존인 `src/losses/`, `src/metrics/`)다. 그 외 코드는 실행 기반으로 먼저 배치한다.
 
 `src/core/`(factory/trainer/evaluator/predictor), `src/data/`(dataloader/dataset/transforms),
-`src/utils/`(geometry/io)는 재구성 대상이 아니므로 내용 변경 없이 ver3로 복사해 실행 기반을
-갖춘다. [0002](0002-experiments-into-scripts-plan.md)에서 이관한 `scripts/*.py`가 이들을
+`src/utils/`(geometry/io)는 재구성 대상이 아니므로 실행 기반으로
+갖춘다. [0002](0002-experiments-into-scripts-plan.md)에서 배치한 `scripts/*.py`가 이들을
 import 하므로, 이 이관으로 `scripts/` 실행 그래프의 비-재구성 의존부가 채워진다.
-
-ver2 내부 파일은 참고·읽기 전용이므로([../CLAUDE.md](../CLAUDE.md)), 결과는 ver3 내부에 생성한다.
-ver2에는 어떤 변경도 가하지 않는다.
 
 ## 2. 범위
 
@@ -37,14 +33,14 @@ ver2에는 어떤 변경도 가하지 않는다.
 
 ## 3. 재구성 매핑
 
-| ver2 원본 | ver3 신규 | 변경 내용 |
+| 기존 구성 | 신규 구성 | 변경 내용 |
 | --- | --- | --- |
-| `src/__init__.py` | `src/__init__.py` | 그대로 |
-| `src/core/*.py` | `src/core/*.py` | 그대로 (바이트 동일) |
-| `src/data/*.py` | `src/data/*.py` | 그대로 (바이트 동일) |
-| `src/utils/*.py` | `src/utils/*.py` | 그대로 (바이트 동일) |
+| `src/__init__.py` | `src/__init__.py` | 유지 |
+| `src/core/*.py` | `src/core/*.py` | 유지 |
+| `src/data/*.py` | `src/data/*.py` | 유지 |
+| `src/utils/*.py` | `src/utils/*.py` | 유지 |
 
-이관 후 ver3 `src/` 구조는 다음과 같다.
+이관 후 `src/` 구조는 다음과 같다.
 
 ```text
 src/
@@ -81,16 +77,13 @@ src/
 
 ## 5. 완료 기준
 
-- ver3 `src/`에 `__init__.py`와 `core/`, `data/`, `utils/` 하위 `.py` 파일이 ver2와 바이트
-  동일하게 존재할 것
+- `src/`에 `__init__.py`와 `core/`, `data/`, `utils/` 하위 `.py` 파일이 존재할 것
 - `__pycache__`가 이관되지 않을 것
-- ver2 파일은 하나도 수정되지 않을 것
 
 ## 6. 검증
 
 `src/models/`, `src/metrics/`가 아직 없으므로 `core/evaluator.py`를 포함한 전체 import 실행
 검증은 이 단계에서 불가능하다. 이관은 텍스트 동등성으로 검증한다.
 
-- `src/__init__.py`, `src/core/*.py`, `src/data/*.py`, `src/utils/*.py`가 각각 ver2 원본과
-  `diff` 결과 무차이임을 확인
-- ver3 `src/`에 `__pycache__`가 없음을 확인
+- `src/__init__.py`, `src/core/*.py`, `src/data/*.py`, `src/utils/*.py`가 존재함을 확인
+- `src/`에 `__pycache__`가 없음을 확인

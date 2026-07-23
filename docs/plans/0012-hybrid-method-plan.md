@@ -92,8 +92,8 @@ Classical CV Hybrid 방법론 문서를 따른다. 이 플랜은 그 이론을 v
 구현 착수 시점에 0010이 이미 적용되어 있었고(`src/models/` 경로, `network=` 인자), 아래 항목을
 실제 코드에서 확인해 설계를 확정했다.
 
-- `seg` preprocessor는 `SegPreprocessor(mask_size)`로 PIL polygon fill을 사용한다. `HybridPreprocessor`는 이를 subclass해 그대로 재사용했다. `seg` postprocessor는 mask 극점(extreme point) 기반이라 hybrid의 컨투어 approxPolyDP fallback과 다르므로, fallback은 ver1 hybrid postprocessor의 `_extract_contour`(approxPolyDP $\to$ minAreaRect $\to$ `mask_to_corners`)를 이식했다.
-- `BasePostprocessor.__call__(raw_output)`은 원본 이미지를 받지 않는다. 따라서 cornerSubPix 그래디언트 입력은 예측 확률 지도(sigmoid map)를 사용한다. 이는 ver1 hybrid 구현과 동일하며 시그니처 확장이 필요 없다.
+- `seg` preprocessor는 `SegPreprocessor(mask_size)`로 PIL polygon fill을 사용한다. `HybridPreprocessor`는 이를 subclass해 그대로 재사용했다. `seg` postprocessor는 mask 극점(extreme point) 기반이라 hybrid의 컨투어 approxPolyDP fallback과 다르므로, fallback은 `_extract_contour`(approxPolyDP $\to$ minAreaRect $\to$ `mask_to_corners`)로 구현했다.
+- `BasePostprocessor.__call__(raw_output)`은 원본 이미지를 받지 않는다. 따라서 cornerSubPix 그래디언트 입력은 예측 확률 지도(sigmoid map)를 사용하며 시그니처 확장이 필요 없다.
 - 후처리 성공/실패는 별도 플래그 반환 관례가 없고, 실패 표본은 `(4, 2)` NaN 코너로 표현한다. `BaseMetric.update`가 NaN 예측을 건너뛰므로 `PolygonIoU`는 성공 표본에만 집계되고, 유효 예측 비율은 기존 `SuccessRate` 지표로 집계한다. `HybridWrapper`의 기본 지표는 `{"iou": PolygonIoU(), "sr": SuccessRate()}`로 설정했다.
 - `src/components/losses.py`에 `BCELoss`, `DiceLoss`가 이미 존재한다. 방법론 문서의 결합 손실을 명시적으로 표현하기 위해 두 손실의 가중합($\lambda=1$)을 계산하는 `BCEDiceLoss`를 신규 추가하고 hybrid 기본 손실로 사용했다.
 - `src/components/backbones.py`에 mobilenet 계열이 없어 `mobilenet_v3_large`를 추가했다. `cv2`는 conda 환경 `pytorch_env`에 4.12.0으로 존재한다.

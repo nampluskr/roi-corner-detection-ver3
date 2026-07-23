@@ -50,15 +50,15 @@ PEAK_CONFIGS = [
 
 # ridge
 RIDGE_CONFIGS = [
-    # {"model": "ridge", "batch_size": 4, "max_epochs": 5, "network": "resnet18", "head": "ridge", "warmup_epochs": 1},
-    # {"model": "ridge", "batch_size": 4, "max_epochs": 5, "network": "custom", "head": "ridge"},
-    # {"model": "ridge", "batch_size": 4, "max_epochs": 5, "network": "resnet34", "head": "ridge"},
-    # {"model": "ridge", "batch_size": 4, "max_epochs": 5, "network": "resnet50", "head": "ridge"},
-    # {"model": "ridge", "batch_size": 4, "max_epochs": 5, "network": "efficientnet_b0", "head": "ridge"},
-    # {"model": "ridge", "batch_size": 4, "max_epochs": 5, "network": "swin_t", "head": "ridge"},
-    # {"model": "ridge", "batch_size": 4, "max_epochs": 5, "network": "vgg16", "head": "ridge"},
-    # {"model": "ridge", "batch_size": 4, "max_epochs": 5, "network": "vgg19", "head": "ridge"},
-    # {"model": "ridge", "batch_size": 4, "max_epochs": 5, "network": "wide_resnet50_2.tv_in1k", "head": "ridge"},
+    # {"model": "ridge", "batch_size": 4, "max_epochs": 5, "network": "resnet18", "head": "pcaline", "warmup_epochs": 1},
+    # {"model": "ridge", "batch_size": 4, "max_epochs": 5, "network": "custom", "head": "pcaline"},
+    # {"model": "ridge", "batch_size": 4, "max_epochs": 5, "network": "resnet34", "head": "pcaline"},
+    # {"model": "ridge", "batch_size": 4, "max_epochs": 5, "network": "resnet50", "head": "pcaline"},
+    # {"model": "ridge", "batch_size": 4, "max_epochs": 5, "network": "efficientnet_b0", "head": "pcaline"},
+    # {"model": "ridge", "batch_size": 4, "max_epochs": 5, "network": "swin_t", "head": "pcaline"},
+    # {"model": "ridge", "batch_size": 4, "max_epochs": 5, "network": "vgg16", "head": "pcaline"},
+    # {"model": "ridge", "batch_size": 4, "max_epochs": 5, "network": "vgg19", "head": "pcaline"},
+    # {"model": "ridge", "batch_size": 4, "max_epochs": 5, "network": "wide_resnet50_2.tv_in1k", "head": "pcaline"},
 ]
 
 # gcn
@@ -111,7 +111,7 @@ METHOD_COMPARISON_CONFIGS = [
     # {"model": "seg", "batch_size": 4, "network": "custom", "head": "mask", "test_size": 1000, "checkpoint": "outputs/public/seg/custom_mask/example/model.pth"},
     # {"model": "det", "batch_size": 4, "network": "custom", "head": "box", "test_size": 1000, "checkpoint": "outputs/public/det/custom_box/example/model.pth"},
     # {"model": "peak", "batch_size": 4, "network": "custom", "head": "peak", "test_size": 1000, "checkpoint": "outputs/public/peak/custom_peak/example/model.pth"},
-    # {"model": "ridge", "batch_size": 4, "network": "custom", "head": "ridge", "test_size": 1000, "checkpoint": "outputs/public/ridge/custom_ridge/example/model.pth"},
+    # {"model": "ridge", "batch_size": 4, "network": "custom", "head": "pcaline", "test_size": 1000, "checkpoint": "outputs/public/ridge/custom_pcaline/example/model.pth"},
 ]
 
 CONFIGS = REG_CONFIGS + SEG_CONFIGS + PEAK_CONFIGS + RIDGE_CONFIGS + GCN_CONFIGS + HYBRID_CONFIGS + DET_CONFIGS

@@ -70,17 +70,6 @@ def ridge_map(sigma):
     return acc
 
 
-def fig_reg():
-    fig, ax = plt.subplots(figsize=(3.2, 3.2))
-    base_scene(ax, "reg: sigmoid + reshape -> 4 corners")
-    draw_gt_poly(ax)
-    pred = CORNERS + np.array([[0.02, -0.01], [-0.02, 0.02], [0.01, -0.02], [-0.01, 0.01]])
-    draw_pred_corners(ax, pred)
-    fig.tight_layout()
-    fig.savefig(os.path.join(OUT_DIR, "postprocess_reg.png"), dpi=140)
-    plt.close(fig)
-
-
 def fig_seg():
     fig, axes = plt.subplots(1, 2, figsize=(6.4, 3.2))
     ys, xs = np.mgrid[0:GRID, 0:GRID]
@@ -114,12 +103,12 @@ def fig_peak():
     plt.close(fig)
 
 
-def fig_ridge():
+def fig_ridge_pcaline():
     fig, axes = plt.subplots(1, 2, figsize=(6.4, 3.2))
     rmap = ridge_map(sigma=6)
     base_scene(axes[0], "ridge: 4-channel edge Gaussian")
     axes[0].imshow(rmap, cmap="cividis", extent=[0, GRID, GRID, 0])
-    base_scene(axes[1], "ridge: PCA lines + intersection")
+    base_scene(axes[1], "pcaline: PCA lines + intersection")
     axes[1].imshow(rmap, cmap="cividis", alpha=0.5, extent=[0, GRID, GRID, 0])
     px = to_px(CORNERS)
     for i in range(4):
@@ -131,7 +120,7 @@ def fig_ridge():
         axes[1].plot([ext1[0], ext2[0]], [ext1[1], ext2[1]], color="#f5a", lw=1.2)
     draw_pred_corners(axes[1], CORNERS, color="#f5a")
     fig.tight_layout()
-    fig.savefig(os.path.join(OUT_DIR, "postprocess_ridge.png"), dpi=140)
+    fig.savefig(os.path.join(OUT_DIR, "postprocess_ridge_pcaline.png"), dpi=140)
     plt.close(fig)
 
 
@@ -316,12 +305,11 @@ def fig_det_point():
 
 
 def main():
-    fig_reg()
     fig_reg_gap()
     fig_reg_spatial()
     fig_seg()
     fig_peak()
-    fig_ridge()
+    fig_ridge_pcaline()
     fig_ridge_peakprod()
     fig_det()
     fig_det_box()

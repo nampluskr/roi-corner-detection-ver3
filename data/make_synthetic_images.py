@@ -1374,8 +1374,8 @@ def prepare_output_dir(output_dir):
 
 
 def generate_dataset(geometry_profile, target_name, args, texture_paths):
-    """Generate one preview dataset into data/synthetic/<target_name>."""
-    output_dir = os.path.join(DATA_DIR, "synthetic", target_name)
+    """Generate one preview dataset into data/synthetic/<target_name>_<count>."""
+    output_dir = os.path.join(DATA_DIR, "synthetic", "{}_{}".format(target_name, args.count))
     prepare_output_dir(output_dir)
     print("output=" + output_dir)
     print("geometry_profile=" + geometry_profile)

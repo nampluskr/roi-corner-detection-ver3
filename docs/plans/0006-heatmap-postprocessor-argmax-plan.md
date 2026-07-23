@@ -45,9 +45,7 @@ soft-argmax)의 목적함수 불일치였다. `HeatmapPostprocessor`를 soft-arg
   실측으로 정확함을 확인했다.
 - `HeatmapMSELoss` 클래스 자체는 삭제하지 않고 유지한다. 다른 곳에서 참조할 가능성을 배제하지
   않기 위함이며, heatmap wrapper의 기본값에서만 제외한다.
-- ver2의 동일 구현(`260712_roi-corner-detection-ver2/src/models/heatmap/`,
-  `260712_roi-corner-detection-ver2/src/losses/heatmap_mse_loss.py`)은 참고 전용이며 수정하지
-  않는다.
+- 다른 heatmap 관련 구현은 수정하지 않는다.
 - 다른 method(reg, seg, det, torchseg, torchdet, yolo, detr)의 loss, postprocessor, wrapper는
   변경하지 않는다.
 

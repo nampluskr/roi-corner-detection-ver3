@@ -73,6 +73,15 @@ flowchart LR
 단계가 진행될수록 data 양과 learning rate가 함께 줄어든다. 현재 CLI의 `--dataset`은 이 단계 이름과
 같으며 output path `outputs/<dataset>/<model>/<network_head>/<exp_name>/`의 첫 segment로 남는다.
 
+public 단계의 실제 예시는 SmartDoc과 MIDV2020이다. SmartDoc은 문서 image에서 document quadrilateral을
+제공하고, MIDV2020은 카드와 ID 문서 image에서 대상 문서의 네 corner를 제공한다. 두 dataset 모두
+`gt_corners.csv`의 normalized `[0,1]` 좌표와 `TL`, `TR`, `BR`, `BL` 순서로 같은 corner contract에
+맞춰진다.
+
+![SmartDoc public dataset corner example](assets/public_smartdoc_example.png)
+
+![MIDV2020 public dataset corner example](assets/public_midv2020_example.png)
+
 ## 페이지 5. Data 특성이 만드는 project 제약
 
 각 단계의 data 특성은 project 설계 제약 F1부터 F8로 이어진다. 이 제약이 augmentation 범위, 표현 선택,
@@ -414,7 +423,7 @@ flowchart LR
 ## 페이지 18. ridge (Dense Edge Ridge)
 
 polygon의 각 변을 Gaussian 능선으로 표현하고 corner를 복원한다. 복원 방식은 `--head`로 두 가지를
-선택한다. 기본 `ridge` head는 PCA line fitting과 인접 line intersection을 사용하고, `peakprod` head는
+선택한다. 기본 `pcaline` head는 PCA line fitting과 인접 line intersection을 사용하고, `peakprod` head는
 인접 channel을 곱해 corner별 국소 peak를 만든 뒤 channel별 argmax를 사용한다. model, target, loss는
 두 head가 공유하며 postprocessor만 다르다.
 
@@ -425,7 +434,7 @@ flowchart LR
   C --> D[FourChannelDenseHead]
   D --> E["4-channel logits (B,4,Hd,Wd)"]
   E --> F[sigmoid probabilities]
-  F --> G["ridge head: PCA per channel + adjacent-line intersection"]
+  F --> G["pcaline head: PCA per channel + adjacent-line intersection"]
   F --> H["peakprod head: multiply adjacent channels + channel argmax"]
   G --> J["final corners (B,4,2)"]
   H --> J
@@ -434,9 +443,9 @@ flowchart LR
   E --> M
 ```
 
-기본 `ridge` head의 후처리 결과 예시는 다음과 같다.
+기본 `pcaline` head의 후처리 결과 예시는 다음과 같다.
 
-![ridge postprocess](assets/postprocess_ridge.png)
+![ridge pcaline postprocess](assets/postprocess_ridge_pcaline.png)
 
 인접 channel 곱을 사용하는 `peakprod` head의 후처리 결과 예시는 다음과 같다.
 
@@ -445,10 +454,10 @@ flowchart LR
 | 요소 | 내용 |
 | --- | --- |
 | 전처리 | infinite-line distance Gaussian, sigma는 `ridge_size / 28`, crest band를 1.0으로 snap |
-| 후처리 (`ridge`) | background suppression, weighted PCA, line intersection |
+| 후처리 (`pcaline`) | background suppression, weighted PCA, line intersection |
 | 후처리 (`peakprod`) | 인접 channel 곱, corner별 국소 peak, channel argmax |
 | 손실함수 | `HeatmapFocalLoss`, crest snap으로 channel별 dense positive line 확보 |
-| 특징 | edge 전체 evidence 사용, `ridge`는 평행 line에서 corner 이탈, `peakprod`는 교점 발산 대신 argmax quantization 한계 |
+| 특징 | edge 전체 evidence 사용, `pcaline`은 평행 line에서 corner 이탈, `peakprod`는 교점 발산 대신 argmax quantization 한계 |
 
 ## 페이지 19. det (Custom Grid Detection)
 

@@ -14,11 +14,11 @@ from src.components.metrics import PolygonIoU
 class RidgeWrapper(BaseWrapper):
     """Wraps ridge models behind the shared Trainer/Evaluator/Predictor interface."""
 
-    def __init__(self, in_channels=3, network="custom", head="ridge", image_size=224,
+    def __init__(self, in_channels=3, network="custom", head="pcaline", image_size=224,
                  optimizer=None, scheduler=None, preprocessor=None, postprocessor=None,
                  losses=None, metrics=None, device=None, warmup_epochs=1):
-        if head not in (None, "ridge", "peakprod"):
-            raise ValueError("Unknown ridge head: %s. Supported: ridge, peakprod" % head)
+        if head not in (None, "pcaline", "peakprod"):
+            raise ValueError("Unknown ridge head: %s. Supported: pcaline, peakprod" % head)
         model = RidgeModel(in_channels=in_channels, network=network)
         preprocessor = preprocessor or RidgePreprocessor(image_size // model.ridge_stride)
         if postprocessor is None:

@@ -77,7 +77,7 @@ CLI의 `--model`이 선택하는 current registry는 다음과 같다.
 | `seg` | ROI binary mask | `mask` | [Segmentation](docs/models/02-seg.md) |
 | `det` | custom class와 regression grid | `box`, `point` | [Detection](docs/models/04-det.md) |
 | `peak` | corner별 Gaussian peak map | `peak` | [Dense Prediction](docs/models/03-dense-prediction.md) |
-| `ridge` | edge별 Gaussian ridge map | `ridge` | [Dense Prediction](docs/models/03-dense-prediction.md) |
+| `ridge` | edge별 Gaussian ridge map | `pcaline` | [Dense Prediction](docs/models/03-dense-prediction.md) |
 | `gcn` | graph 기반 iterative corner refinement | `gcn` | [GCN](docs/models/05-gcn.md) |
 | `hybrid` | learned mask와 classical geometry | `hybrid` | [Hybrid](docs/models/06-hybrid.md) |
 | `torchseg` | torchvision whole segmentation mask | `mask` | [External Models](docs/models/07-external-models.md) |
@@ -113,7 +113,8 @@ image_dir,image_name,x1,y1,x2,y2,x3,y3,x4,y4
 corner 순서는 `TL`, `TR`, `BR`, `BL`이고 값은 `[0,1]` normalized coordinate여야 한다. `image_dir`과
 `image_name`을 결합한 path에 실제 image가 있어야 한다.
 
-current default CSV는 개발 환경의 absolute path이므로 다른 machine에서는 `--csv_path`를 명시해야 한다.
+current default CSV는 repository 내부 `data/public/smartdoc/gt_corners.csv`와
+`data/public/midv2020/gt_corners.csv`를 사용한다. 다른 dataset으로 실행할 때는 `--csv_path`를 명시한다.
 schema, 여러 CSV 결합, 60:20:20 split과 transform은 [Dataset Format Guide](docs/guides/01-dataset-format.md)를
 참고한다. data가 public, synthetic, measured 3단계로 구성되는 이유와 단계별 특성이 만드는 project
 제약은 [Data Strategy](docs/architecture/05-data-strategy.md)에서 다룬다.

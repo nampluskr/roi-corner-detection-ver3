@@ -70,9 +70,8 @@ postprocess, loss 경로이며 network 조립은 공유한다.
 ## 5. Network와 head 선택
 
 `offset`은 `custom`, torchvision backbone, timm backbone을 지원하며 `--network`/`--net`으로 선택한다.
-`--head`는 `spatial`과 `gap`을 지원한다. 기본값은 `spatial`이다. ver1의 기존 방법론이 spatial 정보를
-보존하는 strided-conv head를 사용했고, 작은 변위를 예측하는 offset prior가 local spatial arrangement를
-활용하는 `spatial` head와 잘 맞기 때문이다.
+`--head`는 `spatial`과 `gap`을 지원한다. 기본값은 `spatial`이다. `spatial` head는 strided convolution으로
+local spatial arrangement를 보존하므로, 작은 변위를 예측하는 offset prior와 잘 맞는다.
 
 두 head의 동작은 `reg`와 동일하다. `gap`은 global feature에 하나의 linear layer를 적용하고, `spatial`은
 두 번의 strided convolution, `4 x 4` adaptive pooling, linear projection을 사용한다. head 세부는

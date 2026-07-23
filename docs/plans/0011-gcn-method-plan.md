@@ -72,14 +72,13 @@
 ## 구현 결과
 
 이 플랜은 0010이 적용된 이후 상태에서 구현했다. 따라서 실제 경로는 `src/models/gcn/`이고
-아키텍처 인자는 `network=`이며, factory와 스크립트는 `model="gcn"` 문자열로 dispatch한다. ver1
-(`../260701_roi-corner-detection-ver1/src/models/gcn/`)의 구현을 참고하되, ver3의 컴포넌트 구조에
-맞게 다음을 변경했다.
+아키텍처 인자는 `network=`이며, factory와 스크립트는 `model="gcn"` 문자열로 dispatch한다. 현재
+컴포넌트 구조에 맞게 다음을 변경했다.
 
 - backbone은 raw torchvision resnet 직접 사용 대신 `FeatureExtractor` + `CNNBackboneAdapter(keep_spatial=True, keep_stages=False)`로 통일했다. `custom`/`resnet`/`efficientnet`/`swin`/`vgg`/timm CNN을 지원하며 기본값은 `custom`이다.
 - 초기 추정 head는 `src/models/gcn/model.py`의 로컬 `InitHead`(stride conv x2 + AdaptiveAvgPool + Flatten + Linear)로 구현했다.
 - GCN 정제는 로컬 `GCNRefiner`로 구현하고, 4-순환 정규화 인접행렬은 `adjacency` 버퍼로 고정 등록했다. `iterations`, `num_layers`, `shared_weights`, `offset_radius`, `hidden_dim`을 `GCNModel` 생성자 인자로 노출했다.
-- 심층 감독 손실은 ver1의 wrapper 내부 override 대신 공유 컴포넌트 `DeepSupervisedSmoothL1Loss`로 추출해 `src/components/losses.py`에 추가했다. 표준 `BaseWrapper.compute_losses`가 `raw_output (N, T+1, 4, 2)`와 passthrough target `(N, 4, 2)`를 그대로 전달하므로 wrapper override가 필요 없다. 단계 가중치는 균등(`late_emphasis=False`)과 후기 강조(`late_emphasis=True`)를 모두 지원한다.
+- 심층 감독 손실은 공유 컴포넌트 `DeepSupervisedSmoothL1Loss`로 추출해 `src/components/losses.py`에 추가했다. 표준 `BaseWrapper.compute_losses`가 `raw_output (N, T+1, 4, 2)`와 passthrough target `(N, 4, 2)`를 그대로 전달하므로 wrapper override가 필요 없다. 단계 가중치는 균등(`late_emphasis=False`)과 후기 강조(`late_emphasis=True`)를 모두 지원한다.
 - optimizer/scheduler는 `RidgeWrapper`와 동일한 2단계 warmup 패턴을 재사용했고, `scripts/config.py`의 `warmup_models`에 `gcn`을 추가했다.
 
 ## 범위

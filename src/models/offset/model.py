@@ -6,7 +6,7 @@ from src.components.backbones import SUPPORTED_BACKBONES, VIT_BACKBONES, TorchBa
 from src.components.backbones import SUPPORTED_TIMM_BACKBONES, TIMM_VIT_BACKBONES, TimmBackbone
 from src.components.adapters import CNNBackboneAdapter, TransformerBackboneAdapter
 from src.components.features import FeatureExtractor, FeatureSpec
-from src.components.heads import CoordGapHead, CoordSpatialHead
+from src.components.heads import GapHead, SpatialHead
 
 MARGIN = 0.25
 ALPHA = 0.25
@@ -27,7 +27,7 @@ def _build_extractor_and_head(encoder, backbone_name, is_vit, head, dropout):
         else:
             adapter = CNNBackboneAdapter(keep_spatial=False, keep_stages=False)
         spec = FeatureSpec(backbone_name, adapter_name, global_channels=encoder.out_channels)
-        coordinate_head = CoordGapHead(spec.global_channels, dropout=dropout)
+        coordinate_head = GapHead(spec.global_channels, dropout=dropout)
     elif head == "spatial":
         if is_vit:
             adapter = TransformerBackboneAdapter(keep_spatial=True, keep_global=False)
@@ -36,7 +36,7 @@ def _build_extractor_and_head(encoder, backbone_name, is_vit, head, dropout):
         spec = FeatureSpec(backbone_name, adapter_name,
                            global_channels=encoder.out_channels,
                            spatial_channels=encoder.out_channels)
-        coordinate_head = CoordSpatialHead(spec.spatial_channels, dropout=dropout)
+        coordinate_head = SpatialHead(spec.spatial_channels, dropout=dropout)
     else:
         raise ValueError("Unknown offset head: %s. Supported: gap, spatial" % head)
     return FeatureExtractor(encoder, adapter, spec), coordinate_head
