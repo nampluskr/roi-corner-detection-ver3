@@ -137,6 +137,14 @@ $$
 현재 target은 두 corner 사이의 segment에서 멈추지 않고 map 전체를 가로지르는 infinite line이다. 이
 설계는 postprocessor가 line 전체의 방향을 안정적으로 fitting할 수 있게 한다.
 
+이산 격자에서는 직선이 픽셀 중심을 정확히 지나는 일이 거의 없어 `d(q)`가 정확히 0인 픽셀이 없고,
+Gaussian target의 최댓값이 1.0에 도달하지 못한다. `HeatmapFocalLoss`는 positive를 `target == 1.0`인
+픽셀로 정의하므로, 정규화하지 않으면 positive anchor가 하나도 없어 loss가 배경 억제 항만 남고 ridge를
+맞히는 방향으로 학습되지 않는다. 이를 막기 위해 `RidgePreprocessor`는 Gaussian을 계산한 뒤 line까지의
+수직거리 `|d(q)|`가 0.5 픽셀 이하인 crest 픽셀을 정확히 1.0으로 snap한다. 그 결과 channel마다 dense한
+positive line이 생겨 focal loss가 정상적으로 동작한다. `peak`가 channel별 max로 정확한 1.0 peak를
+만드는 것과 같은 목적이며, ridge는 point 대신 line 전체를 positive로 사용한다는 점이 다르다.
+
 ## 8. Ridge width와 resolution
 
 `RidgePreprocessor`는 sigma를 명시하지 않으면 `ridge_size / 28.0`으로 정한다. 그 결과 map resolution이
@@ -162,12 +170,13 @@ negative penalty가 완화된다.
 현재 기본값은 `alpha=2`, `beta=4`다. loss는 positive 개수로 나눈다. `PeakPreprocessor`가 각 channel의
 최대값을 1로 정규화하므로 sample마다 네 positive cell이 생긴다.
 
-`RidgePreprocessor`는 별도의 peak normalization을 하지 않는다. continuous line이 discrete grid cell을
-정확히 통과하면 target 1인 cell이 여러 개 생길 수 있지만, line이 cell center를 정확히 지나지 않으면
-`target.eq(1.0)` 조건을 만족하는 cell이 없을 수도 있다. 이 경우 current loss는 positive count를 1로
-clamp해 division error를 막고, 모든 위치를 Gaussian 값에 따라 weight가 완화된 negative로 계산한다.
-이는 `peak`와 `ridge`가 같은 loss class를 사용하더라도 positive 정의가 완전히 같지는 않다는 현재 구현의
-중요한 세부 사항이다.
+`RidgePreprocessor`는 channel별 max normalization 대신 crest snap을 사용한다. continuous line이 discrete
+grid cell을 정확히 통과하지 않으면 Gaussian 최댓값이 1에 도달하지 못해 `target.eq(1.0)` 조건을 만족하는
+cell이 없어진다. 이 경우 positive count가 0이 되어 loss가 배경 억제 항만 남고 ridge를 맞히는 방향으로
+학습되지 않는다. 이를 막기 위해 preprocessor는 line까지의 수직거리 `|d|`가 0.5 cell 이하인 crest cell을
+정확히 1.0으로 설정한다. 그 결과 channel마다 line을 따라 dense한 positive cell이 생긴다. `peak`는 point
+하나를 1로 정규화하고 `ridge`는 line 전체를 1로 snap한다는 점이 다르지만, 두 model 모두 sample마다 유효한
+positive를 가진다는 점은 같다.
 
 ## 10. `ridge` postprocess 개요
 
@@ -227,7 +236,40 @@ edge line `i`의 교점이다.
 않는다. ridge prediction이 잘못된 경우 normalized 범위를 벗어난 corner가 나올 수 있으므로 결과를
 검증해야 한다.
 
-## 14. 학습과 추론 흐름 비교
+## 14. `peakprod` head와 인접 채널 곱 postprocess
+
+`ridge` model은 line-intersection 대신 peak 방식으로 corner를 복원하는 `peakprod` head를 선택할 수
+있다. `--head peakprod`를 지정하면 model, target, loss는 그대로 두고 postprocessor만
+`RidgePeakProductPostprocessor`로 바뀐다.
+
+이 방식은 4개 ridge map을 하나로 합치지 않는다. ridge map은 point 봉우리가 아니라 image를 가로지르는
+직선이므로, 합쳐서 단일 argmax를 하면 corner 4개를 안정적으로 얻기 어렵다. 대신 corner `i`가 line
+`(i-1) mod 4`와 line `i` 위에 동시에 놓인다는 성질을 이용한다. 두 line map을 곱하면 두 직선이 만나는
+교점에서만 값이 크게 남고 나머지는 억제되어 corner별 국소 peak가 만들어진다.
+
+전체 흐름은 다음과 같다.
+
+```text
+ridge logits
+-> sigmoid probabilities
+-> multiply channel i by channel (i-1)%4
+-> four corner peak maps
+-> channel-wise hard argmax
+-> normalized corners
+```
+
+`sigmoid`를 적용한 probability map을 `probs`라고 하면, 채널 정렬은 `probs.roll(1, dims=1)`로 채널 `i`
+자리에 line `(i-1) mod 4`를 놓아 원소별 곱을 계산한다. 이 채널 매핑은 `RidgePostprocessor`가
+`roll(1, dims=1)`로 인접 직선을 짝짓는 방식과 일치한다. 이후 corner map마다 hard argmax를 적용하고
+`width - 1`, `height - 1`로 나누어 normalized corner로 복원하는 부분은 `PeakPostprocessor`와 같다.
+
+곱 결과의 교점이 배경보다 항상 크므로 `peakprod`는 기본적으로 background threshold를 사용하지 않는다.
+학습이 부족해 곱-map의 argmax가 corner를 한 점으로 몰거나 교점이 아닌 위치를 고르면 곱 전에
+channel별 상대 threshold를 도입할 수 있다. `peakprod`는 nearly parallel line에서 division이 필요 없어
+`RidgePostprocessor`의 교점 발산 failure mode에 덜 취약하지만, argmax quantization 한계는 `peak`와
+동일하게 가진다.
+
+## 15. 학습과 추론 흐름 비교
 
 두 model의 흐름은 다음과 같이 비교할 수 있다.
 
@@ -241,7 +283,7 @@ edge line `i`의 교점이다.
 
 같은 network와 loss를 사용해도 target과 postprocess가 다르면 학습 난이도와 failure mode가 크게 달라진다.
 
-## 15. Warmup과 optimizer
+## 16. Warmup과 optimizer
 
 두 wrapper는 기본 `warmup_epochs=1`을 사용한다. 첫 phase는 extractor를 freeze하고 decoder와 head를
 `1e-4`로 학습한다. 두 번째 phase는 extractor `1e-5`, 나머지 component `1e-4`를 사용한다.
@@ -249,7 +291,7 @@ edge line `i`의 교점이다.
 `ReduceLROnPlateau`는 validation IoU가 개선되지 않을 때 learning rate를 줄인다. dense loss가 감소하는
 것만으로 final corner IoU가 좋아진다고 볼 수 없으므로 scheduler가 IoU를 보는 것이 중요하다.
 
-## 16. 대표 실패 원인과 진단
+## 17. 대표 실패 원인과 진단
 
 `peak`의 주요 failure mode는 다음과 같다.
 
@@ -269,7 +311,15 @@ edge line `i`의 교점이다.
 | top과 bottom line이 뒤섞임 | channel order 학습 실패 | ridge target channel visualization |
 | custom backbone만 ridge가 약함 | resolution 대비 target 폭 또는 underfitting | sigma, max probability, epoch |
 
-## 17. Model 선택 기준
+`peakprod` head는 위 실패 원인을 공유하되 교점 발산 대신 argmax 관련 증상을 보인다.
+
+| 증상 | 가능한 원인 | 확인 방법 |
+| --- | --- | --- |
+| 네 corner가 한 점으로 몰림 | 곱-map이 배경에 지배됨 | 곱 전 channel별 max와 background |
+| corner가 교점이 아닌 line 위를 고름 | 인접 line 학습 실패 | ridge target channel visualization |
+| 예측이 cell 단위로만 움직임 | hard argmax quantization | map resolution |
+
+## 18. Model 선택 기준
 
 두 dense 표현의 선택 기준은 다음과 같다.
 
@@ -281,7 +331,11 @@ edge line `i`의 교점이다.
 | subpixel refinement가 필요한가 | 현재 hard argmax 한계 | line fitting으로 보완 가능 |
 | failure 분석을 단순화해야 하는가 | channel map만 보면 됨 | map과 line geometry 모두 봐야 함 |
 
-## 18. Code mapping
+`ridge`를 선택하되 postprocess를 단순하게 유지하고 싶으면 `peakprod` head를 사용한다. edge 지도학습은
+그대로 두고 corner 복원만 인접 channel 곱과 argmax로 처리하므로, PCA와 intersection 없이 `peak`와
+유사한 hard argmax 특성으로 corner를 얻는다.
+
+## 19. Code mapping
 
 `peak` 구현의 대응은 다음과 같다.
 
@@ -299,11 +353,13 @@ edge line `i`의 교점이다.
 | dense model assembly | `src/models/ridge/model.py` |
 | infinite-line ridge target | `src/models/ridge/preprocessor.py` |
 | weighted PCA와 intersection | `src/models/ridge/postprocessor.py` |
+| 인접 채널 곱 4-peak | `src/models/ridge/postprocessor.py` |
+| head별 postprocessor 선택 | `src/models/ridge/wrapper.py` |
 | focal loss와 optimizer | `src/models/ridge/wrapper.py` |
 
 공유 decoder와 head는 `src/components/decoders.py`, `src/components/heads.py`에 있다.
 
-## 19. 실행 예시
+## 20. 실행 예시
 
 Gaussian peak model은 다음과 같이 실행한다.
 
@@ -317,12 +373,21 @@ Gaussian ridge model은 다음과 같이 실행한다.
 python scripts/train.py --model ridge --network resnet18 --head ridge --save
 ```
 
-`peak`와 `ridge`의 head 이름은 고정되어 있다. network를 비교할 때 output stride가 달라지면 map
-resolution과 target sigma도 함께 달라진다는 점을 기록한다.
+같은 ridge model을 인접 채널 곱 4-peak postprocess로 실행하려면 head를 `peakprod`로 지정한다.
 
-## 20. 핵심 요약
+```bash
+python scripts/train.py --model ridge --network custom --head peakprod --save
+```
+
+`peak`의 head 이름은 고정되어 있고, `ridge`는 `ridge`와 `peakprod` 두 head를 지원한다. `peakprod`는
+target과 loss를 `ridge`와 공유하고 postprocessor만 다르므로 학습된 checkpoint를 그대로 두 head로
+복원해 비교할 수 있다. network를 비교할 때 output stride가 달라지면 map resolution과 target sigma도
+함께 달라진다는 점을 기록한다.
+
+## 21. 핵심 요약
 
 `peak`는 corner 위치에 Gaussian 봉우리를 만들고 channel별 hard argmax로 점을 복원한다. `ridge`는 각
 edge를 Gaussian line으로 표현하고 threshold, weighted PCA, adjacent-line intersection으로 corner를
-복원한다. 두 model은 architecture와 focal loss를 공유하지만 `target이 무엇을 의미하는가`와
-`postprocessor가 어떤 geometry를 사용하는가`가 다르다.
+복원한다. `ridge`는 `peakprod` head로 인접 line channel을 곱해 corner별 국소 peak를 만들고 channel별
+argmax로 복원하는 대안 postprocess도 제공한다. 세 경로는 architecture와 focal loss를 공유하지만
+`target이 무엇을 의미하는가`와 `postprocessor가 어떤 geometry를 사용하는가`가 다르다.

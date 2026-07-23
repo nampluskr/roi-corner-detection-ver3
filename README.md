@@ -73,6 +73,7 @@ CLI의 `--model`이 선택하는 current registry는 다음과 같다.
 | model | 학습 표현 | 대표 head | 상세 문서 |
 | --- | --- | --- | --- |
 | `reg` | normalized corner 8개 직접 회귀 | `gap`, `spatial` | [Regression](docs/models/01-reg.md) |
+| `offset` | canonical square 대비 corner offset 회귀 | `spatial`, `gap` | [Offset](docs/models/08-offset.md) |
 | `seg` | ROI binary mask | `mask` | [Segmentation](docs/models/02-seg.md) |
 | `det` | custom class와 regression grid | `box`, `point` | [Detection](docs/models/04-det.md) |
 | `peak` | corner별 Gaussian peak map | `peak` | [Dense Prediction](docs/models/03-dense-prediction.md) |
@@ -270,7 +271,7 @@ current implementation이 동작의 최우선 기준이며 root README와 `docs/
 
 ## 15. 핵심 요약
 
-이 project는 11개 model 선택자를 common normalized corner contract로 묶는다. `--model`, `--network`,
+이 project는 12개 model 선택자를 common normalized corner contract로 묶는다. `--model`, `--network`,
 `--head`로 assembly를 정하고, labeled CSV에서 60:20:20 split을 만들어 train, evaluate, predict script를
 실행한다. 첫 작업은 image size 224와 작은 custom regression run으로 확인하고, checkpoint와 history,
 metrics, predictions를 한 실험 단위로 관리한다.

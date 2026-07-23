@@ -30,7 +30,7 @@ image height와 width를 `H`, `W`라고 하면 입력과 최종 출력은 다음
 
 | 표현 | 핵심 질문 | 해당 model |
 | --- | --- | --- |
-| coordinate | image 전체를 보고 좌표를 바로 예측할 수 있는가 | `reg` |
+| coordinate | image 전체를 보고 좌표를 바로 예측할 수 있는가 | `reg`, `offset` |
 | mask | ROI 영역을 먼저 칠한 뒤 외곽에서 corner를 찾을 수 있는가 | `seg`, `hybrid`, `torchseg` |
 | dense map | 각 pixel이 corner 또는 edge에 가까운 정도를 예측할 수 있는가 | `peak`, `ridge` |
 | detection | corner를 class가 있는 작은 object로 취급할 수 있는가 | `det`, `torchdet`, `yolo`, `detr` |
@@ -48,11 +48,12 @@ image height와 width를 `H`, `W`라고 하면 입력과 최종 출력은 다음
 | ---: | --- | --- | --- |
 | 1 | [01-reg.md](01-reg.md) | `reg` | 회귀, logit, sigmoid |
 | 2 | [02-seg.md](02-seg.md) | `seg` | binary mask, encoder-decoder |
-| 3 | [03-dense-prediction.md](03-dense-prediction.md) | `peak`, `ridge` | Gaussian map, argmax, line fitting |
+| 3 | [03-dense-prediction.md](03-dense-prediction.md) | `peak`, `ridge` | Gaussian map, argmax, line fitting, adjacent-channel peak |
 | 4 | [04-det.md](04-det.md) | `det` | grid cell, classification, offset |
 | 5 | [05-gcn.md](05-gcn.md) | `gcn` | graph, vertex feature, iterative refinement |
 | 6 | [06-hybrid.md](06-hybrid.md) | `hybrid` | learned mask와 classical geometry 결합 |
 | 7 | [07-external-models.md](07-external-models.md) | `torchseg`, `torchdet`, `yolo`, `detr` | whole-model adapter와 native loss |
+| 8 | [08-offset.md](08-offset.md) | `offset` | canonical square, 4-point offset, alpha*tanh bounding |
 
 처음 읽는 경우에는 번호 순서대로 읽는 것이 좋다. 특정 model을 실행하는 것이 목적이라면 해당 문서의
 실행 예시와 code mapping부터 확인한 뒤 앞쪽 개념 절로 돌아가도 된다.

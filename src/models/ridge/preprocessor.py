@@ -10,7 +10,10 @@ class RidgePreprocessor(BasePreprocessor):
 
     Channel i is a Gaussian ridge along the infinite line through corners i and
     (i + 1) % 4, extended across the full image rather than stopping at the two
-    corners, so its crest forms a straight line cutting the map in two.
+    corners, so its crest forms a straight line cutting the map in two. Pixels
+    within half a cell of the line are snapped to exactly 1.0 so HeatmapFocalLoss,
+    which treats target == 1.0 pixels as positives, has a dense positive line per
+    channel instead of zero positives when no pixel center lies exactly on the line.
     """
 
     def __init__(self, ridge_size, sigma=None):
@@ -38,4 +41,6 @@ class RidgePreprocessor(BasePreprocessor):
         py = ys.unsqueeze(1) - p1[:, :, 1].view(n, 4, 1, 1)
         distance = px * normal[:, :, 0].view(n, 4, 1, 1) + py * normal[:, :, 1].view(n, 4, 1, 1)
 
-        return torch.exp(-distance.pow(2) / (2.0 * self.sigma * self.sigma))
+        target = torch.exp(-distance.pow(2) / (2.0 * self.sigma * self.sigma))
+        crest = distance.abs() <= 0.5
+        return target.masked_fill(crest, 1.0)

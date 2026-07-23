@@ -17,11 +17,13 @@ slides/
 │   ├── postprocess_det_point.png
 │   ├── postprocess_gcn.png
 │   ├── postprocess_hybrid.png
+│   ├── postprocess_offset.png
 │   ├── postprocess_peak.png
 │   ├── postprocess_reg.png
 │   ├── postprocess_reg_gap.png
 │   ├── postprocess_reg_spatial.png
 │   ├── postprocess_ridge.png
+│   ├── postprocess_ridge_peakprod.png
 │   ├── postprocess_seg.png
 │   ├── synth_background.png
 │   ├── synth_camera_hole.png
@@ -50,7 +52,8 @@ slides/
 
 head가 여러 종류인 model은 head별로 후처리 이미지를 나눈다. `reg`는 `postprocess_reg_gap.png`와
 `postprocess_reg_spatial.png`, `det`는 `postprocess_det_box.png`와 `postprocess_det_point.png`를 둔다.
-head가 하나인 나머지 model은 계열별 단일 이미지를 사용한다.
+`ridge`는 기본 line-intersection head의 `postprocess_ridge.png`에 더해 인접 channel 곱 head의
+`postprocess_ridge_peakprod.png`를 둔다. head가 하나인 나머지 model은 계열별 단일 이미지를 사용한다.
 
 후처리 이미지는 실제 학습 checkpoint 산출물이 아니라 개념을 설명하는 도식이다. 정답 corner를 고정한
 합성 예시에서 각 model의 raw output 표현과 postprocess 결과를 그렸다. 실제 실험 결과 이미지는 향후

@@ -135,6 +135,35 @@ def fig_ridge():
     plt.close(fig)
 
 
+def ridge_channel(i, sigma):
+    ys, xs = np.mgrid[0:GRID, 0:GRID]
+    px = to_px(CORNERS)
+    p1 = px[i]
+    p2 = px[(i + 1) % 4]
+    d = p2 - p1
+    n = np.array([-d[1], d[0]])
+    n = n / (np.linalg.norm(n) + 1e-9)
+    dist = (xs - p1[0]) * n[0] + (ys - p1[1]) * n[1]
+    return np.exp(-(dist ** 2) / (2 * sigma ** 2))
+
+
+def fig_ridge_peakprod():
+    fig, axes = plt.subplots(1, 2, figsize=(6.4, 3.2))
+    sigma = 6
+    channels = [ridge_channel(i, sigma) for i in range(4)]
+    rmap = np.maximum.reduce(channels)
+    base_scene(axes[0], "ridge: 4-channel edge Gaussian")
+    axes[0].imshow(rmap, cmap="cividis", extent=[0, GRID, GRID, 0])
+    corner_maps = np.maximum.reduce([channels[(i - 1) % 4] * channels[i] for i in range(4)])
+    base_scene(axes[1], "peakprod: adjacent-channel product + argmax")
+    axes[1].imshow(corner_maps, cmap="magma", extent=[0, GRID, GRID, 0])
+    draw_gt_poly(axes[1], color="#cfe")
+    draw_pred_corners(axes[1], CORNERS, color="#39d")
+    fig.tight_layout()
+    fig.savefig(os.path.join(OUT_DIR, "postprocess_ridge_peakprod.png"), dpi=140)
+    plt.close(fig)
+
+
 def fig_det():
     fig, ax = plt.subplots(figsize=(3.4, 3.4))
     base_scene(ax, "det: grid cells + class assign -> box center")
@@ -293,6 +322,7 @@ def main():
     fig_seg()
     fig_peak()
     fig_ridge()
+    fig_ridge_peakprod()
     fig_det()
     fig_det_box()
     fig_det_point()

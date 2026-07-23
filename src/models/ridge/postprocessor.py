@@ -1,4 +1,4 @@
-# src/models/ridge/postprocessor.py: recover standard corners from four edge ridge-line maps
+# src/models/ridge/postprocessor.py: recover standard corners from four edge ridge-line maps by line fit or adjacent-channel peak
 
 import torch
 
@@ -71,3 +71,25 @@ class RidgePostprocessor(BasePostprocessor):
         diff = p2 - p1
         t = (diff[..., 0] * d2[..., 1] - diff[..., 1] * d2[..., 0]) / denom
         return p1 + t.unsqueeze(-1) * d1
+
+
+class RidgePeakProductPostprocessor(BasePostprocessor):
+    """Multiplies each edge ridge map by its preceding neighbor and hard-argmax picks four corner peaks.
+
+    Corner i lies on both edge line (i - 1) % 4 and edge line i, so the product of
+    those two probability maps forms a sharp peak at their intersection while the rest
+    of each line cancels. Rolling the channel axis by one aligns channel i with edge
+    line (i - 1) % 4, matching the adjacency used by the line-intersection variant.
+    Each corner product map is then reduced by a per-channel hard argmax, so no
+    single-channel merge or non-maximum suppression is needed.
+    """
+
+    def __call__(self, raw_output):
+        n, c, height, width = raw_output.shape
+        probs = torch.sigmoid(raw_output)
+        edge_prev = probs.roll(1, dims=1)
+        corner_maps = (probs * edge_prev).reshape(n, c, height * width)
+        indices = corner_maps.argmax(dim=2)
+        y = (indices // width).to(raw_output.dtype) / max(height - 1, 1)
+        x = (indices % width).to(raw_output.dtype) / max(width - 1, 1)
+        return torch.stack([x, y], dim=2)

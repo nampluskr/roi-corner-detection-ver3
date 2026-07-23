@@ -77,7 +77,7 @@ HYBRID_CONFIGS = [
     # {"model": "hybrid", "batch_size": 4, "max_epochs": 5, "network": "custom", "head": "hybrid"},
     # {"model": "hybrid", "batch_size": 4, "max_epochs": 5, "network": "resnet18", "head": "hybrid"},
     # {"model": "hybrid", "batch_size": 4, "max_epochs": 5, "network": "resnet50", "head": "hybrid"},
-    {"model": "hybrid", "batch_size": 4, "max_epochs": 5, "network": "vgg16", "head": "hybrid"},
+    # {"model": "hybrid", "batch_size": 4, "max_epochs": 5, "network": "vgg16", "head": "hybrid"},
 ]
 
 # det

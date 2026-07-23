@@ -53,6 +53,9 @@ def get_wrapper(model, device=None, **kwargs):
     if model == "reg":
         from src.models.reg.wrapper import RegWrapper
         return RegWrapper(device=device, **kwargs)
+    if model == "offset":
+        from src.models.offset.wrapper import OffsetWrapper
+        return OffsetWrapper(device=device, **kwargs)
     if model == "seg":
         from src.models.seg.wrapper import SegWrapper
         return SegWrapper(device=device, **kwargs)
