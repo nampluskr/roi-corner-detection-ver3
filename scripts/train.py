@@ -5,8 +5,8 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from scripts.config import parse_args, get_output_dir, get_wrapper_kwargs
-from src.utils.io import save_model
+from scripts.config import parse_args, get_output_dir, get_prev_checkpoint_path, get_wrapper_kwargs
+from src.utils.io import load_model, save_model
 from src.core.factory import get_dataloader, get_wrapper
 from src.core.trainer import Trainer
 
@@ -24,6 +24,14 @@ def main():
 
     wrapper = get_wrapper(args.model, device=args.device, **get_wrapper_kwargs(args))
     trainer = Trainer(wrapper, output_dir=output_dir)
+
+    prev_checkpoint = get_prev_checkpoint_path(args)
+    if prev_checkpoint is not None and os.path.exists(prev_checkpoint):
+        load_model(wrapper.model, prev_checkpoint)
+        trainer.logger.info("initialized weights from previous stage %s" % prev_checkpoint)
+    else:
+        trainer.logger.info("no previous stage checkpoint, training from backbone init")
+
     history = trainer.fit_early_stop(train_loader, valid_loader,
         max_epochs=args.max_epochs, patience=args.patience)
     trainer.save(history)

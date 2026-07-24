@@ -33,6 +33,8 @@ DEFAULTS = dict(
     test_size=1000,     # None: all test samples
 )
 
+PREV_DATASET = {"synthetic": "public", "measured": "synthetic"}
+
 
 def cfg_get(cfg, key, default=None):
     """Return one config value from a dict or argparse namespace."""
@@ -58,11 +60,26 @@ def get_model_name(cfg):
     return "%s_%s" % (network, head)
 
 
-def get_output_dir(cfg, base="outputs"):
+def get_output_dir(cfg, base="outputs", dataset=None):
     """Return the outputs/{dataset}/{model}/{network_head}/{exp_name} directory for the given config."""
-    dataset = cfg_get(cfg, "dataset", DEFAULTS["dataset"])
+    if dataset is None:
+        dataset = cfg_get(cfg, "dataset", DEFAULTS["dataset"])
     model = cfg_get(cfg, "model", DEFAULTS["model"])
     return os.path.join(base, dataset, model, get_model_name(cfg), get_experiment(cfg))
+
+
+def get_checkpoint_path(cfg, base="outputs", dataset=None):
+    """Return the model.pth checkpoint path inside the stage output directory."""
+    return os.path.join(get_output_dir(cfg, base=base, dataset=dataset), "model.pth")
+
+
+def get_prev_checkpoint_path(cfg, base="outputs"):
+    """Return the previous stage model.pth path if the current dataset has a prior stage, else None."""
+    dataset = cfg_get(cfg, "dataset", DEFAULTS["dataset"])
+    prev = PREV_DATASET.get(dataset)
+    if prev is None:
+        return None
+    return get_checkpoint_path(cfg, base=base, dataset=prev)
 
 
 def get_wrapper_kwargs(args):

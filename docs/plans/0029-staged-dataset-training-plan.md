@@ -2,7 +2,7 @@
 
 | 항목 | 내용 |
 | --- | --- |
-| 상태 | Draft |
+| 상태 | Done |
 | 작성일 | 2026-07-23 |
 | 적용 범위 | `scripts/config.py`, `scripts/train.py`, `scripts/evaluate.py`, `scripts/predict.py`, `README.md`, `docs/guides/02-cli-usage.md`, `docs/guides/04-experiment-output.md`, `docs/architecture/05-data-strategy.md` |
 | 관련 문서 | [05-data-strategy.md](../architecture/05-data-strategy.md), [02-cli-usage.md](../guides/02-cli-usage.md), [04-experiment-output.md](../guides/04-experiment-output.md) |

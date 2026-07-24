@@ -17,8 +17,9 @@ RUN_MODES = ["train", "evaluate", "predict"]
 MODES = RUN_MODES + ["all"]
 
 PASS_KEYS = [
-    "network", "head", "device", "batch_size", "max_epochs", "num_workers",
-    "train_size", "valid_size", "test_size", "checkpoint", "output_dir", "warmup_epochs",
+    "dataset", "csv_path", "network", "head", "device", "batch_size", "max_epochs",
+    "num_workers", "train_size", "valid_size", "test_size", "checkpoint", "output_dir",
+    "warmup_epochs",
 ]
 
 
@@ -62,7 +63,11 @@ def get_cli_args(cfg, mode):
         args.append("--save")
     for key in PASS_KEYS:
         if key in cfg:
-            args += ["--%s" % key, str(cfg[key])]
+            value = cfg[key]
+            if isinstance(value, (list, tuple)):
+                args += ["--%s" % key] + [str(item) for item in value]
+            else:
+                args += ["--%s" % key, str(value)]
     if mode in ("evaluate", "predict") and not cfg.get("checkpoint"):
         output_dir = cfg.get("output_dir") or get_output_dir(cfg)
         args += ["--checkpoint", os.path.join(output_dir, "model.pth")]

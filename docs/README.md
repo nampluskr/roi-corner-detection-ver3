@@ -71,6 +71,7 @@ architecture 문서는 특정 model 하나보다 package 사이의 공통 경계
 | 3 | [03-training-workflow.md](guides/03-training-workflow.md) | data audit, smoke run, full training과 비교 실험 |
 | 4 | [04-experiment-output.md](guides/04-experiment-output.md) | output naming, file schema, overwrite와 결과 해석 |
 | 5 | [05-synthetic-generation.md](guides/05-synthetic-generation.md) | fringe image와 LabelMe JSON 생성, 변형 변수, hole 가시성, corner 레이블, gt_corners 변환 |
+| 6 | [06-use-cases.md](guides/06-use-cases.md) | stage별 학습과 평가 집계, 추론만 수행하는 CLI 시나리오 |
 
 guide는 command를 나열하는 데 그치지 않고 전제 조건, 생성 결과, 확인 방법과 흔한 오류를 함께 설명한다.
 
@@ -139,7 +140,8 @@ docs/
 │   ├── 02-cli-usage.md
 │   ├── 03-training-workflow.md
 │   ├── 04-experiment-output.md
-│   └── 05-synthetic-generation.md
+│   ├── 05-synthetic-generation.md
+│   └── 06-use-cases.md
 ├── models/
 │   ├── 01-reg.md
 │   ├── 02-seg.md

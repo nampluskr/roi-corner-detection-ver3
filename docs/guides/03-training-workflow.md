@@ -335,8 +335,10 @@ python scripts/batch_run.py --mode predict
 python scripts/batch_run.py --mode all
 ```
 
-batch run 전에 active `CONFIGS`만 남았는지 확인한다. current runner는 data identity option 전체를 전달하지
-않으므로 custom CSV나 seed가 필요한 실험은 command를 직접 실행하거나 runner를 먼저 확장해야 한다.
+batch run 전에 active `CONFIGS`만 남았는지 확인한다. current runner는 config dict의 `dataset`, `csv_path`,
+`network`, `head`, lifecycle option을 하위 script로 전달하므로 stage별로 다른 CSV와 dataset을 config에서
+지정할 수 있다. `seed` 같은 일부 option은 아직 전달하지 않으므로 필요하면 command를 직접 실행하거나
+runner를 먼저 확장한다.
 
 한 config가 실패해도 runner는 다음 config를 계속 실행하고 마지막 summary에서 실패를 보고한다. terminal
 중간의 `[FAIL]`과 최종 exit code를 모두 확인한다.
@@ -346,11 +348,19 @@ predict 순서로 실행한다. 별도 설정 파일을 사용하려면 top-leve
 같이 지정한다.
 
 ```bash
-python scripts/batch_run.py --mode all --config configs/comparison_config.py
+python scripts/batch_run.py --mode all --config configs/public.py
 ```
 
 `--config`를 생략하면 `scripts/batch_config.py`를 사용한다. 상대 path는 current working
-directory와 project root 순서로 탐색한다.
+directory와 project root 순서로 탐색한다. dataset stage별 config 파일은 `configs/` 아래에 있으며,
+stage별 학습과 평가, 추론만 수행하는 CLI 시나리오는 [Use Cases](06-use-cases.md)에서 다룬다.
+
+여러 실험의 `metrics.json`을 한 표로 모을 때는 `scripts/collect_metrics.py`를 사용한다. 이 script는
+`outputs/` 아래 experiment directory를 순회하며 metric을 pandas DataFrame으로 모아 CSV로 저장한다.
+
+```bash
+python scripts/collect_metrics.py --dataset public --output outputs/public/metrics_summary.csv
+```
 
 ## 19. 재현성 체크리스트
 
@@ -394,7 +404,8 @@ workflow를 운영할 때 알아야 할 current limitation은 다음과 같다.
 - non-default image size는 wrapper target와 scale에 반영되지 않을 수 있다.
 - automatic experiment name은 seed, CSV, size limit 등 모든 실험 변수를 포함하지 않는다.
 - predictor는 image path와 상세 postprocess failure reason을 저장하지 않는다.
-- batch runner는 parser의 모든 option을 config에서 전달하지 않는다.
+- batch runner는 `dataset`과 `csv_path`를 포함해 대부분의 option을 전달하지만 `seed` 등 일부 option은
+  아직 config에서 전달하지 않는다.
 
 ## 22. Code mapping
 
@@ -408,7 +419,8 @@ workflow 각 단계의 source는 다음과 같다.
 | wrapper lifecycle | `src/models/base/wrapper.py` |
 | common evaluation | `scripts/evaluate.py`, `src/core/evaluator.py` |
 | sample prediction | `scripts/predict.py`, `src/core/predictor.py` |
-| batch experiment | `scripts/batch_config.py`, `scripts/batch_run.py` |
+| batch experiment | `scripts/batch_config.py`, `configs/`, `scripts/batch_run.py` |
+| metric 집계 | `scripts/collect_metrics.py` |
 
 ## 23. 핵심 요약
 
