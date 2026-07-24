@@ -20,7 +20,7 @@
 
 ```bash
 conda activate pytorch_env
-cd /mnt/d/projects/nampluskr/00_review/260720_roi-corner-detection-ver3
+cd <project-root>
 ```
 
 각 시나리오의 실험 조합은 `configs/` 아래 stage별 파일에서 정의한다. 파일 구성은 다음과 같다.
@@ -56,7 +56,7 @@ python scripts/collect_metrics.py --dataset public --output outputs/public/metri
 ```
 
 `collect_metrics.py`는 `outputs/public/` 아래 experiment directory를 순회하며 `metrics.json`을 pandas
-DataFrame으로 읽어 `dataset`, `model`, `network`, `head`, `exp_name`과 metric 열을 가진 CSV로 저장한다.
+DataFrame으로 읽어 `dataset`, `model`, `exp_name`과 metric 열을 가진 CSV로 저장한다.
 `--dataset`을 생략하면 `outputs/` 전체를 집계한다.
 
 ## 3. 시나리오 2: synthetic dataset 학습과 평가 집계
@@ -102,7 +102,7 @@ stage output 경로의 `model.pth`를 사용한다.
 
 ```bash
 python scripts/predict.py --dataset measured --model reg --network custom --head gap \
---csv_path /absolute/path/to/gt_corners.csv --checkpoint outputs/measured/reg/custom_gap/EXP/model.pth
+--csv_path /absolute/path/to/gt_corners.csv --checkpoint outputs/measured/reg/EXP/model.pth
 ```
 
 두 방법 모두 evaluate를 실행하지 않으므로 `metrics.json`을 만들지 않는다. 예측 결과 열 구조는

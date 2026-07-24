@@ -9,7 +9,7 @@ current implementation이 자동으로 기록하지 않는 metadata도 있으므
 `--output_dir`을 지정하지 않으면 다음 규칙으로 directory를 만든다.
 
 ```text
-outputs/<dataset>/<model>/<network_head>/<exp_name>/
+outputs/<dataset>/<model>/<exp_name>/
 ```
 
 각 segment의 의미는 다음과 같다.
@@ -18,14 +18,12 @@ outputs/<dataset>/<model>/<network_head>/<exp_name>/
 | --- | --- | --- |
 | `dataset` | `--dataset` 문자열 | `public` |
 | `model` | `--model` 문자열 | `seg` |
-| `network_head` | `<network>_<head>` | `resnet18_mask` |
-| `exp_name` | `<model>_bs<batch_size>_ep<max_epochs>_<network>_<head>` | `seg_bs4_ep50_resnet18_mask` |
+| `exp_name` | `<model>_<network>_<head>_<dataset>` | `seg_resnet18_mask_public` |
 
-예를 들어 public dataset label, segmentation, ResNet-18, mask head, batch size 4, max epoch 50은 다음 path를
-사용한다.
+예를 들어 public dataset label, segmentation, ResNet-18, mask head는 다음 path를 사용한다.
 
 ```text
-outputs/public/seg/resnet18_mask/seg_bs4_ep50_resnet18_mask/
+outputs/public/seg/seg_resnet18_mask_public/
 ```
 
 ## 2. `dataset` segment의 의미
@@ -38,9 +36,9 @@ outputs/public/seg/resnet18_mask/seg_bs4_ep50_resnet18_mask/
 
 `dataset` segment는 staged 학습의 연결 고리이기도 하다. `scripts/train.py`는 현재 `dataset`의 이전 단계
 output 경로에 있는 `model.pth`가 있으면 그 weight를 자동으로 불러온다. 이전 단계 관계는 `synthetic`이
-`public`을, `measured`가 `synthetic`을 가리킨다. 이 연결은 `dataset` segment만 다르고 `model`,
-`network_head`, `exp_name` segment가 같은 두 output directory 사이에서 성립한다. 평가와 예측에서
-`--checkpoint`를 생략하면 같은 규칙으로 현재 stage output의 `model.pth`를 사용한다.
+`public`을, `measured`가 `synthetic`을 가리킨다. 이 연결은 같은 `model`, `network`, `head` 조합에서
+dataset stage만 이전 단계로 바꾼 output directory 사이에서 성립한다. 평가와 예측에서 `--checkpoint`를
+생략하면 같은 규칙으로 현재 stage output의 `model.pth`를 사용한다.
 
 ## 3. 자동 이름에 포함되지 않는 값
 
@@ -50,6 +48,7 @@ automatic `exp_name`에는 다음 값이 포함되지 않는다.
 - seed
 - image size
 - train, valid, test size
+- batch size와 max epoch
 - patience와 warmup epochs
 - optimizer와 learning rate
 - device와 dependency version
@@ -67,7 +66,7 @@ python scripts/train.py \
   --csv_path /data/gt_corners.csv \
   --model reg --network resnet18 --head spatial \
   --seed 42 --max_epochs 50 --save \
-  --output_dir outputs/public/reg/resnet18_spatial/full_seed42
+  --output_dir outputs/public/reg/full_seed42
 ```
 
 명시 경로는 automatic rule 전체를 대체한다. directory가 없으면 logger와 save 함수가 생성한다. checkpoint를
@@ -394,7 +393,7 @@ output 생성 source는 다음과 같다.
 
 ## 24. 핵심 요약
 
-automatic output path는 dataset label, model, network, head, batch size, max epoch만 표현한다. history는 epoch
+automatic output path는 dataset label, model, network, head만 표현한다. history는 epoch
 과정, checkpoint는 best model state, metrics는 test aggregate, predictions는 sample별 final corner를
 담는다. loss와 common metric을 구분하고 `sr`와 fallback을 함께 확인해야 한다. 같은 path의 재실행은 log를
 이어 붙이거나 다른 file을 덮어쓸 수 있으므로 실험 directory와 metadata를 명시적으로 관리해야 한다.

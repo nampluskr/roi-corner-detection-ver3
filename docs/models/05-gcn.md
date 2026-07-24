@@ -32,7 +32,7 @@ graph는 vertex와 edge로 구성된다. 이 model에서 vertex는 corner이고 
 | 2 | `BR` | `TR`, `BL` |
 | 3 | `BL` | `BR`, `TL` |
 
-각 vertex에는 현재 coordinate와 그 위치에서 sample한 image feature가 붙는다. graph convolution은 한
+각 vertex에는 현재 coordinate와 그 위치에서 sample한 image feature가 붙는1다. graph convolution은 한
 vertex의 feature를 이웃 feature와 섞어 다음 hidden representation을 만든다.
 
 ## 3. 입출력 계약

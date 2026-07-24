@@ -1,7 +1,7 @@
 ---
 상태: Done
 작성일: 2026-07-22
-적용 범위: ver3 `docs/architecture/05-data-strategy.md` 신설, `docs/README.md` 색인 갱신, `slides/outline.md` 서론 데이터 페이지 추가, offline pre-augmentation과 online transform 구분 서술 추가
+적용 범위: `docs/architecture/05-data-strategy.md` 신설, `docs/README.md` 색인 갱신, `slides/outline.md` 서론 데이터 페이지 추가, offline pre-augmentation과 online transform 구분 서술 추가
 관련 문서: [../architecture/05-data-strategy.md](../architecture/05-data-strategy.md), [../guides/01-dataset-format.md](../guides/01-dataset-format.md), [../README.md](../README.md), [../../slides/outline.md](../../slides/outline.md)
 ---
 
@@ -46,7 +46,7 @@ architecture 계층 문서로 두는 것이 적절하다.
 다음을 모두 충족하면 이 plan을 `Done`으로 본다.
 
 - `docs/architecture/05-data-strategy.md`가 3단계 전략, 단계별 특성, 제약 대응, 합성 레이블 원리,
-  현재 `--dataset` stage와의 관계를 ver3 문서 규칙에 맞게 서술한다.
+  현재 `--dataset` stage와의 관계를 현재 문서 규칙에 맞게 서술한다.
 - `docs/README.md`가 새 문서를 architecture 표와 구조 tree에 반영한다.
 - `slides/outline.md`가 서론에 데이터 3페이지를 포함하고 이후 페이지 번호가 연속한다.
 

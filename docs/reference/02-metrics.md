@@ -312,7 +312,7 @@ metric 숫자가 비교 가능하려면 다음 조건을 고정한다.
 | normalized coordinate convention | distance scale이 달라짐 |
 | postprocessor setting | 같은 raw output도 final corner가 달라짐 |
 
-batch size는 일반적으로 final metric 정의를 바꾸지 않지만, numerical implementation이나 default output path는
+batch size는 일반적으로 final metric 정의나 default output path를 바꾸지 않지만, numerical implementation은
 달라질 수 있다.
 
 ## 18. Metric이 말하지 않는 것

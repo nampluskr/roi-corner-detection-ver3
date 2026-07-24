@@ -2,7 +2,7 @@
 상태: Done
 작성일: 2026-07-21
 완료일: 2026-07-21
-적용 범위: ver3 `src/methods/ridge/model.py`, `src/methods/ridge/preprocessor.py`, `src/methods/ridge/postprocessor.py`, `src/methods/ridge/wrapper.py`
+적용 범위: `src/methods/ridge/model.py`, `src/methods/ridge/preprocessor.py`, `src/methods/ridge/postprocessor.py`, `src/methods/ridge/wrapper.py`
 관련 문서: [../README.md](../README.md), [../CLAUDE.md](../CLAUDE.md), [0005-methods-restructure-plan.md](0005-methods-restructure-plan.md), [0006-heatmap-postprocessor-argmax-plan.md](0006-heatmap-postprocessor-argmax-plan.md), [0009-peak-ridge-naming-plan.md](0009-peak-ridge-naming-plan.md)
 ---
 

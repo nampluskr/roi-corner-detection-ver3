@@ -153,13 +153,13 @@ exp/dir 이름 로직(`get_experiment`/`get_model_name`)은 `model or backbone` 
   `src.methods.base.*`).
 
 Python 실행과 검증은 conda `pytorch_env`에서 project root
-(`/mnt/d/projects/nampluskr/00_review/260720_roi-corner-detection-ver3`)를 기준으로 수행한다. `python -c`
+(`<project-root>`)를 기준으로 수행한다. `python -c`
 같이 script의 `sys.path` 보정이 없는 명령은 `PYTHONPATH`에 project root를 포함한다.
 
 ```bash
 conda activate pytorch_env
-cd /mnt/d/projects/nampluskr/00_review/260720_roi-corner-detection-ver3
-PYTHONPATH=/mnt/d/projects/nampluskr/00_review/260720_roi-corner-detection-ver3 python -c "import src"
+cd <project-root>
+PYTHONPATH=<project-root> python -c "import src"
 ```
 
 ## 8. 완료 기준
@@ -178,7 +178,7 @@ PYTHONPATH=/mnt/d/projects/nampluskr/00_review/260720_roi-corner-detection-ver3 
 
 ```bash
 conda activate pytorch_env
-cd /mnt/d/projects/nampluskr/00_review/260720_roi-corner-detection-ver3
+cd <project-root>
 python -c "from src.core.factory import get_wrapper; \
   [get_wrapper(m, backbone='custom') for m in ('reg','seg','det','heatmap')]; print('OK composable')"
 python -c "import torch; from src.core.factory import get_wrapper; \

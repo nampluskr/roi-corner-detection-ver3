@@ -2,7 +2,7 @@
 상태: Done
 작성일: 2026-07-21
 완료일: 2026-07-21
-적용 범위: ver3 `src/models/ridge/postprocessor.py`
+적용 범위: `src/models/ridge/postprocessor.py`
 관련 문서: [../README.md](../README.md), [../CLAUDE.md](../CLAUDE.md), [0008-ridge-method-plan.md](0008-ridge-method-plan.md), [0009-peak-ridge-naming-plan.md](0009-peak-ridge-naming-plan.md)
 ---
 

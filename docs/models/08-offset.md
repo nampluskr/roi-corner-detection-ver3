@@ -98,7 +98,7 @@ $$
 
 ## 8. Loss 작동 원리
 
-기본 loss는 offset 전용 `OffsetSmoothL1Loss`다. ver3의 공용 `SmoothL1Loss`는 detection 계열의 dict 입력을
+기본 loss는 offset 전용 `OffsetSmoothL1Loss`다. 공용 `SmoothL1Loss`는 detection 계열의 dict 입력을
 전제로 하므로, plain `(B, 8)` offset tensor에는 offset package 안에 정의한 smooth L1을 사용한다.
 
 loss 경로는 postprocess와 일치해야 한다. `compute_losses`는 먼저 target을 만들고 raw output에 동일한

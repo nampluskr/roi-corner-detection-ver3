@@ -2,7 +2,7 @@
 상태: Done
 작성일: 2026-07-21
 완료일: 2026-07-21
-적용 범위: ver3 `src/methods/heatmap/postprocessor.py`, `src/components/losses.py`, `src/methods/heatmap/wrapper.py`
+적용 범위: `src/methods/heatmap/postprocessor.py`, `src/components/losses.py`, `src/methods/heatmap/wrapper.py`
 관련 문서: [../README.md](../README.md), [../CLAUDE.md](../CLAUDE.md), [0005-methods-restructure-plan.md](0005-methods-restructure-plan.md)
 ---
 

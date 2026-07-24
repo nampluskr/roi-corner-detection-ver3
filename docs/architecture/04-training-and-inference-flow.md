@@ -304,18 +304,18 @@ checkpoint는 optimizer state를 포함하지 않으므로 current script에는 
 명시적인 `--output_dir`이 없으면 세 script는 같은 규칙으로 경로를 계산한다.
 
 ```text
-outputs/<dataset>/<model>/<network_head>/<exp_name>/
+outputs/<dataset>/<model>/<exp_name>/
 ```
 
-`network_head`는 `<network>_<head>`이고 experiment 이름은 다음 규칙이다.
+experiment 이름은 다음 규칙이다.
 
 ```text
-<model>_bs<batch_size>_ep<max_epochs>_<network>_<head>
+<model>_<network>_<head>_<dataset>
 ```
 
-evaluation과 prediction도 현재 command의 `batch_size`와 `max_epochs`로 default 경로를 계산한다. checkpoint
-파일 자체는 다른 경로를 지정할 수 있지만 결과 저장 위치가 의도와 달라질 수 있으므로, 학습과 같은
-identity option을 유지하거나 `--output_dir`을 명시하는 것이 좋다.
+evaluation과 prediction도 현재 command의 `dataset`, `model`, `network`, `head`로 default 경로를 계산한다.
+checkpoint 파일 자체는 다른 경로를 지정할 수 있지만 결과 저장 위치가 의도와 달라질 수 있으므로, 학습과
+같은 identity option을 유지하거나 `--output_dir`을 명시하는 것이 좋다.
 
 ## 17. 재현성의 범위
 

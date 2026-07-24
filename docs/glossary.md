@@ -325,8 +325,7 @@ metric의 수식과 invalid sample 처리는 [Metric Reference](reference/02-met
 | experiment | 고정된 data, assembly, training option으로 수행한 한 실행 또는 비교 단위다. |
 | experiment identity | dataset, model, network, head, seed, training scale처럼 실행을 재구성하는 값의 묶음이다. |
 | output directory | log, history, checkpoint, metric, prediction을 저장하는 folder다. |
-| `network_head` | automatic output path에서 network와 head를 underscore로 합친 segment다. |
-| experiment name | current automatic rule의 `<model>_bs<batch_size>_ep<max_epochs>_<network>_<head>` 문자열이다. |
+| experiment name | current automatic rule의 `<model>_<network>_<head>_<dataset>` 문자열이다. |
 | checkpoint | saved model state다. current `model.pth`에는 model state dictionary만 들어 있다. |
 | state dictionary | PyTorch module의 named parameter와 buffer tensor mapping이다. |
 | `run.log` | trainer의 timestamp epoch log다. 같은 directory 재실행 시 append될 수 있다. |

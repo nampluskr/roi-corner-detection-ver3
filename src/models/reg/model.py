@@ -35,10 +35,10 @@ def _build_extractor_and_head(encoder, backbone_name, is_vit, head, dropout):
 class RegModel(BaseModel):
     """Custom, timm, or torchvision backbone plus a matching adapter feeding a coordinate head."""
 
-    def __init__(self, in_channels=3, network="custom", dropout=0.2, head="gap"):
+    def __init__(self, in_channels=3, network="custom", dropout=0.2, head="spatial"):
         super().__init__()
         network = network or "custom"
-        head = head or "gap"
+        head = head or "spatial"
         if network == "custom":
             encoder, is_vit = CustomBackbone(in_channels=in_channels), False
         elif network in SUPPORTED_BACKBONES:

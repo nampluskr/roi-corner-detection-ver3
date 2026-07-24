@@ -21,7 +21,7 @@ DEFAULTS = dict(
     dataset="public",
     model="reg",
     network="custom",
-    head="gap",
+    head="spatial",
     image_size=224,
     batch_size=4,
     max_epochs=5,
@@ -43,29 +43,22 @@ def cfg_get(cfg, key, default=None):
     return getattr(cfg, key, default)
 
 
-def get_experiment(cfg):
-    """Build an experiment name string from model, batch_size, max_epochs, network, and head."""
+def get_exp_name(cfg, dataset=None):
+    """Build an experiment name string from model, network, head, and dataset."""
     model = cfg_get(cfg, "model", DEFAULTS["model"])
-    batch_size = cfg_get(cfg, "batch_size", DEFAULTS["batch_size"])
-    max_epochs = cfg_get(cfg, "max_epochs", DEFAULTS["max_epochs"])
     network = cfg_get(cfg, "network", DEFAULTS["network"]) or DEFAULTS["network"]
     head = cfg_get(cfg, "head", DEFAULTS["head"]) or DEFAULTS["head"]
-    return "%s_bs%d_ep%d_%s_%s" % (model, batch_size, max_epochs, network, head)
-
-
-def get_model_name(cfg):
-    """Return a name segment combining network and head."""
-    network = cfg_get(cfg, "network", DEFAULTS["network"]) or DEFAULTS["network"]
-    head = cfg_get(cfg, "head", DEFAULTS["head"]) or DEFAULTS["head"]
-    return "%s_%s" % (network, head)
+    if dataset is None:
+        dataset = cfg_get(cfg, "dataset", DEFAULTS["dataset"])
+    return "%s_%s_%s_%s" % (model, network, head, dataset)
 
 
 def get_output_dir(cfg, base="outputs", dataset=None):
-    """Return the outputs/{dataset}/{model}/{network_head}/{exp_name} directory for the given config."""
+    """Return the outputs/{dataset}/{model}/{exp_name} directory for the given config."""
     if dataset is None:
         dataset = cfg_get(cfg, "dataset", DEFAULTS["dataset"])
     model = cfg_get(cfg, "model", DEFAULTS["model"])
-    return os.path.join(base, dataset, model, get_model_name(cfg), get_experiment(cfg))
+    return os.path.join(base, dataset, model, get_exp_name(cfg, dataset=dataset))
 
 
 def get_checkpoint_path(cfg, base="outputs", dataset=None):

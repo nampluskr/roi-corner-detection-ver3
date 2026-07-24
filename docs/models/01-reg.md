@@ -75,15 +75,15 @@ projection한다.
 | custom CNN | `custom` | final feature map |
 | torchvision CNN | `resnet18`, `efficientnet_b0`, `vgg16` | final feature map |
 | torchvision transformer | `vit_b_16` | class token 또는 patch token |
-| timm CNN | `wide_resnet50_2.tv_in1k` | final feature map |
+| timm CNN | `wide_resnet50_2` | final feature map |
 | timm transformer | DeiT, CaiT registry 이름 | class token 또는 patch token |
 
 pretrained network는 source에 등록된 local weight를 사용한다. registry에 없는 이름이나 local weight가 없는
 경우 model 생성 단계에서 오류가 발생한다.
 
-## 5. `gap`과 `spatial` head
+## 5. `spatial`과 `gap` head
 
-`--head`는 feature를 좌표로 바꾸는 방식을 선택한다.
+`--head`는 feature를 좌표로 바꾸는 방식을 선택한다. 기본값은 `spatial`이다.
 
 ### 5.1 `gap` head
 
@@ -108,7 +108,7 @@ spatial feature -> strided conv -> strided conv -> 4x4 pooling -> flatten -> lin
 ```
 
 이 head도 마지막에는 8개 값으로 압축되지만, pooling 전에 local pattern을 추가 convolution으로 처리한다.
-corner 위치에 spatial arrangement가 중요하다면 `gap`과 비교할 가치가 있다.
+corner 위치에는 spatial arrangement가 중요하므로 기본 head로 사용한다. 비교 실험에서는 `gap`도 선택할 수 있다.
 
 ## 6. Target 생성
 
@@ -218,16 +218,16 @@ ordering, polygon convexity, corner별 distance를 함께 확인한다.
 
 ## 14. 실행 예시
 
-기본 custom network와 `gap` head는 다음과 같이 학습한다.
+기본 custom network와 `spatial` head는 다음과 같이 학습한다.
 
 ```bash
-python scripts/train.py --model reg --network custom --head gap --save
+python scripts/train.py --model reg --network custom --head spatial --save
 ```
 
-spatial head 비교는 다음과 같이 실행한다.
+`gap` head 비교는 다음과 같이 실행한다.
 
 ```bash
-python scripts/train.py --model reg --network resnet18 --head spatial --save
+python scripts/train.py --model reg --network resnet18 --head gap --save
 ```
 
 checkpoint 평가와 예측에서도 학습 시 사용한 `model`, `network`, `head`를 동일하게 전달해야 한다.

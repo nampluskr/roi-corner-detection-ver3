@@ -35,6 +35,6 @@
 
 ## 검증
 
-`PYTHONPATH`에 ver3 project root를 포함해 `RegModel(head="gap")`과 `OffsetModel(head="spatial")`을
+`PYTHONPATH`에 project root를 포함해 `RegModel(head="gap")`과 `OffsetModel(head="spatial")`을
 생성하고 forward pass의 출력 shape를 확인했다. 문서 변경은 grep으로 활성 문서에 잔여 `CoordGapHead`,
 `CoordSpatialHead` 문자열이 없는지 확인했다.

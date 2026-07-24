@@ -2,7 +2,7 @@
 상태: Done
 작성일: 2026-07-21
 완료일: 2026-07-21
-적용 범위: ver3 `src/models/gcn/model.py`, `src/models/gcn/preprocessor.py`, `src/models/gcn/postprocessor.py`, `src/models/gcn/wrapper.py`, `src/models/gcn/__init__.py`, `src/components/losses.py`(신규 손실 클래스 추가), `src/core/factory.py`(dispatch 추가), `scripts/config.py`·`scripts/batch_config.py`(model 목록 추가)
+적용 범위: `src/models/gcn/model.py`, `src/models/gcn/preprocessor.py`, `src/models/gcn/postprocessor.py`, `src/models/gcn/wrapper.py`, `src/models/gcn/__init__.py`, `src/components/losses.py`(신규 손실 클래스 추가), `src/core/factory.py`(dispatch 추가), `scripts/config.py`·`scripts/batch_config.py`(model 목록 추가)
 관련 문서: [../README.md](../README.md), [../CLAUDE.md](../CLAUDE.md), [0005-methods-restructure-plan.md](0005-methods-restructure-plan.md), [0008-ridge-method-plan.md](0008-ridge-method-plan.md), [0009-peak-ridge-naming-plan.md](0009-peak-ridge-naming-plan.md), [0010-method-to-model-and-network-arg-plan.md](0010-method-to-model-and-network-arg-plan.md), [Polygon GCN 방법론 문서](https://github.com/nampluskr/roi-corner-detection/blob/main/docs/models/07_polygon-gcn.md)
 ---
 
@@ -27,7 +27,7 @@
    고정되어 정렬이나 미검출 처리가 필요 없다.
 
 상세 이론(수식, 손실 함수, 3단계 학습 전략, F1-F8 제약 대응)은 위 "관련 문서"의 Polygon GCN
-방법론 문서를 따른다. 이 플랜은 그 이론을 ver3 코드 구조(`BaseModel`/`BaseWrapper` 인터페이스,
+방법론 문서를 따른다. 이 플랜은 그 이론을 현재 project 코드 구조(`BaseModel`/`BaseWrapper` 인터페이스,
 `src/components/*` 재사용 컴포넌트)에 매핑하는 설계를 확정한다.
 
 ## 이론 요약과 코드 매핑

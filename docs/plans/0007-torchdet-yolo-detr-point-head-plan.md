@@ -2,7 +2,7 @@
 상태: Done
 작성일: 2026-07-21
 완료일: 2026-07-21
-적용 범위: ver3 `src/methods/torchdet/wrapper.py`, `src/methods/yolo/wrapper.py`, `src/methods/detr/wrapper.py`, `scripts/batch_config.py`
+적용 범위: `src/methods/torchdet/wrapper.py`, `src/methods/yolo/wrapper.py`, `src/methods/detr/wrapper.py`, `scripts/batch_config.py`
 관련 문서: [../README.md](../README.md), [../CLAUDE.md](../CLAUDE.md), [0005-methods-restructure-plan.md](0005-methods-restructure-plan.md)
 ---
 
@@ -70,11 +70,11 @@ center 감독이 지배적이 되어 point 방식에 가까워진다.
 
 ## 검증
 
-검증은 프로젝트 규칙에 따라 `pytorch_env`에서 ver3 project root를 기준으로 수행한다.
+검증은 프로젝트 규칙에 따라 `pytorch_env`에서 project root를 기준으로 수행한다.
 
 ```bash
 conda activate pytorch_env
-cd /mnt/d/projects/nampluskr/00_review/260720_roi-corner-detection-ver3
+cd <project-root>
 ```
 
 검증 항목은 다음과 같다.

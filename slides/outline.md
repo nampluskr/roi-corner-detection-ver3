@@ -1,6 +1,6 @@
 # 진행 보고 슬라이드 초안
 
-이 문서는 roi-corner-detection-ver3 진행 보고 슬라이드의 페이지별 초안이다. 각 페이지는 pptx 한 장에
+이 문서는 roi-corner-detection 진행 보고 슬라이드의 페이지별 초안이다. 각 페이지는 pptx 한 장에
 대응한다. 블록 다이어그램은 mermaid로 표시하고 후처리 결과는 이미지로 삽입한다. 모든 model은
 독립된 한 페이지를 가지며 데이터, 전처리, 모델 내부 변환, 후처리, 손실함수를 하나의 흐름으로 그린다.
 
@@ -9,7 +9,7 @@
 
 ## 페이지 1. 표지
 
-제목은 ROI Corner Detection ver3 진행 보고다. 부제로 하나의 corner contract로 12개 neural network
+제목은 ROI Corner Detection 진행 보고다. 부제로 하나의 corner contract로 12개 neural network
 표현을 학습, 평가, 비교하는 PyTorch workspace임을 적는다. 작성일과 작성자, 발표 범위를 함께 둔다.
 
 발표에서 다루는 범위는 다음과 같다.
@@ -71,7 +71,7 @@ flowchart LR
 | 3 | `measured` | 실측 소량 data로 최종 미세 조정 |
 
 단계가 진행될수록 data 양과 learning rate가 함께 줄어든다. 현재 CLI의 `--dataset`은 이 단계 이름과
-같으며 output path `outputs/<dataset>/<model>/<network_head>/<exp_name>/`의 첫 segment로 남는다.
+같으며 output path `outputs/<dataset>/<model>/<exp_name>/`의 첫 segment로 남는다.
 
 public 단계의 실제 예시는 SmartDoc과 MIDV2020이다. SmartDoc은 문서 image에서 document quadrilateral을
 제공하고, MIDV2020은 카드와 ID 문서 image에서 대상 문서의 네 corner를 제공한다. 두 dataset 모두

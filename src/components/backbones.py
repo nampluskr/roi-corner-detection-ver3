@@ -51,16 +51,22 @@ class CustomBackbone(BaseBackbone):
 
 # --- timm CNN/transformer backbone wrappers ---
 
-TIMM_BACKBONE_WEIGHTS = {
-    "wide_resnet50_2.tv_in1k": "/mnt/d/backbones/wide_resnet50_2.tv_in1k/model.safetensors",
-    "deit_base_distilled_patch16_224.fb_in1k": "/mnt/d/backbones/deit_base_distilled_patch16_224.fb_in1k/model.safetensors",
-    "cait_s24_224.fb_dist_in1k": "/mnt/d/backbones/cait_s24_224.fb_dist_in1k/model.safetensors",
+TIMM_MODEL_NAMES = {
+    "wide_resnet50_2": "wide_resnet50_2.tv_in1k",
+    "deit_base_distilled": "deit_base_distilled_patch16_224.fb_in1k",
+    "cait_s24": "cait_s24_224.fb_dist_in1k",
 }
 
-TIMM_CNN_BACKBONES = ("wide_resnet50_2.tv_in1k",)
+TIMM_BACKBONE_WEIGHTS = {
+    "wide_resnet50_2": "/mnt/d/backbones/wide_resnet50_2.tv_in1k/model.safetensors",
+    "deit_base_distilled": "/mnt/d/backbones/deit_base_distilled_patch16_224.fb_in1k/model.safetensors",
+    "cait_s24": "/mnt/d/backbones/cait_s24_224.fb_dist_in1k/model.safetensors",
+}
+
+TIMM_CNN_BACKBONES = ("wide_resnet50_2",)
 TIMM_VIT_PREFIX_TOKENS = {
-    "deit_base_distilled_patch16_224.fb_in1k": 2,
-    "cait_s24_224.fb_dist_in1k": 1,
+    "deit_base_distilled": 2,
+    "cait_s24": 1,
 }
 TIMM_VIT_BACKBONES = tuple(TIMM_VIT_PREFIX_TOKENS.keys())
 SUPPORTED_TIMM_BACKBONES = TIMM_CNN_BACKBONES + TIMM_VIT_BACKBONES
@@ -69,13 +75,13 @@ SUPPORTED_TIMM_BACKBONES = TIMM_CNN_BACKBONES + TIMM_VIT_BACKBONES
 class TimmBackbone(BaseBackbone):
     """timm model wrapper returning the same native CNN/ViT feature contract as TorchBackbone."""
 
-    def __init__(self, backbone="wide_resnet50_2.tv_in1k", pretrained=True):
+    def __init__(self, backbone="wide_resnet50_2", pretrained=True):
         super().__init__()
         if backbone not in SUPPORTED_TIMM_BACKBONES:
             raise ValueError("Unknown timm backbone: %s. Supported: %s"
                              % (backbone, ", ".join(SUPPORTED_TIMM_BACKBONES)))
 
-        net = timm.create_model(backbone, pretrained=False)
+        net = timm.create_model(TIMM_MODEL_NAMES[backbone], pretrained=False)
         if pretrained:
             self.load_local_weights(net, TIMM_BACKBONE_WEIGHTS[backbone])
         net.reset_classifier(0)
@@ -118,6 +124,9 @@ BACKBONE_WEIGHTS = {
     "resnet34": "/mnt/d/backbones/resnet34-b627a593.pth",
     "resnet50": "/mnt/d/backbones/resnet50-0676ba61.pth",
     "efficientnet_b0": "/mnt/d/backbones/efficientnet_b0_rwightman-7f5810bc.pth",
+    "efficientnet_b5": "/mnt/d/backbones/efficientnet_b5_lukemelas-1a07897c.pth",
+    "mobilenet_v2": "/mnt/d/backbones/mobilenet_v2-7ebf99e0.pth",
+    "mobilenet_v3_small": "/mnt/d/backbones/mobilenet_v3_small-047dcff4.pth",
     "mobilenet_v3_large": "/mnt/d/backbones/mobilenet_v3_large-8738ca79.pth",
     "vgg16": "/mnt/d/backbones/vgg16-397923af.pth",
     "vgg19": "/mnt/d/backbones/vgg19-dcbb9e9d.pth",
@@ -130,6 +139,9 @@ BACKBONE_BUILDERS = {
     "resnet34": models.resnet34,
     "resnet50": models.resnet50,
     "efficientnet_b0": models.efficientnet_b0,
+    "efficientnet_b5": models.efficientnet_b5,
+    "mobilenet_v2": models.mobilenet_v2,
+    "mobilenet_v3_small": models.mobilenet_v3_small,
     "mobilenet_v3_large": models.mobilenet_v3_large,
     "vgg16": models.vgg16,
     "vgg19": models.vgg19,
@@ -139,11 +151,22 @@ BACKBONE_BUILDERS = {
 
 SUPPORTED_BACKBONES = tuple(BACKBONE_BUILDERS.keys())
 RESNET_BACKBONES = ("resnet18", "resnet34", "resnet50")
-EFFICIENTNET_BACKBONES = ("efficientnet_b0",)
-MOBILENET_BACKBONES = ("mobilenet_v3_large",)
+EFFICIENTNET_BACKBONES = ("efficientnet_b0", "efficientnet_b5")
+MOBILENET_BACKBONES = ("mobilenet_v2", "mobilenet_v3_small", "mobilenet_v3_large")
 VGG_BACKBONES = ("vgg16", "vgg19")
 VIT_BACKBONES = ("vit_b_16",)
 SWIN_BACKBONES = ("swin_t",)
+
+EFFICIENTNET_STAGE_INFO = {
+    "efficientnet_b0": {"stage_indices": (1, 2, 3, 5, 8), "stage_channels": (16, 24, 40, 112, 1280)},
+    "efficientnet_b5": {"stage_indices": (1, 2, 3, 5, 8), "stage_channels": (24, 40, 64, 176, 2048)},
+}
+
+MOBILENET_STAGE_INFO = {
+    "mobilenet_v2": {"stage_indices": (1, 3, 6, 13, 18), "stage_channels": (16, 24, 32, 96, 1280)},
+    "mobilenet_v3_small": {"stage_indices": (0, 1, 3, 8, 12), "stage_channels": (16, 16, 24, 48, 576)},
+    "mobilenet_v3_large": {"stage_indices": (1, 3, 6, 12, 16), "stage_channels": (16, 24, 40, 112, 960)},
+}
 
 
 class TorchBackbone(BaseBackbone):
@@ -177,16 +200,18 @@ class TorchBackbone(BaseBackbone):
             self.family = "efficientnet"
             self.features = net.features
             self.out_channels = net.classifier[-1].in_features
-            self.stage_indices = (1, 2, 3, 5, 8)
-            self.stage_channels = (16, 24, 40, 112, 1280)
+            stage_info = EFFICIENTNET_STAGE_INFO[backbone]
+            self.stage_indices = stage_info["stage_indices"]
+            self.stage_channels = stage_info["stage_channels"]
             self.stage_strides = (2, 4, 8, 16, 32)
         elif backbone in MOBILENET_BACKBONES:
             self.family = "mobilenet"
             self.features = net.features
-            self.out_channels = net.classifier[0].in_features
-            self.stage_indices = (1, 3, 6, 12, 16)
-            self.stage_channels = (16, 24, 40, 112, 960)
+            stage_info = MOBILENET_STAGE_INFO[backbone]
+            self.stage_indices = stage_info["stage_indices"]
+            self.stage_channels = stage_info["stage_channels"]
             self.stage_strides = (2, 4, 8, 16, 32)
+            self.out_channels = self.stage_channels[-1]
         elif backbone in SWIN_BACKBONES:
             self.family = "swin"
             self.stem = net.features

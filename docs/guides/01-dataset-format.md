@@ -256,7 +256,7 @@ data loading과 한 epoch 실행을 먼저 확인하는 command 예시는 다음
 
 ```bash
 conda activate pytorch_env
-cd /mnt/d/projects/nampluskr/00_review/260720_roi-corner-detection-ver3
+cd <project-root>
 
 python scripts/train.py \
   --csv_path /absolute/path/to/gt_corners.csv \

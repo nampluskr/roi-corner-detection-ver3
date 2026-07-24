@@ -10,7 +10,7 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
-from scripts.config import get_experiment, get_output_dir
+from scripts.config import get_exp_name, get_output_dir
 
 DEFAULT_CONFIG_PATH = os.path.join(PROJECT_ROOT, "scripts", "batch_config.py")
 RUN_MODES = ["train", "evaluate", "predict"]
@@ -81,7 +81,7 @@ def run(mode, configs):
     results = []
 
     for i, cfg in enumerate(configs, 1):
-        exp_name = get_experiment(cfg)
+        exp_name = get_exp_name(cfg)
         print("\n[%d/%d] %s | %s" % (i, total, mode, exp_name))
         cmd = [sys.executable, script] + get_cli_args(cfg, mode)
         try:

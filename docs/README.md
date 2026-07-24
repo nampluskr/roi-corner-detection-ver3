@@ -100,6 +100,7 @@ model 표현별 상세 문서는 다음과 같다.
 | ---: | --- | --- |
 | 1 | [01-losses.md](reference/01-losses.md) | logit, reduction, shared loss 수식, native loss와 current edge case |
 | 2 | [02-metrics.md](reference/02-metrics.md) | IoU, MCD, MaxCD, PCK, success rate와 invalid aggregation |
+| 3 | [03-backbones.md](reference/03-backbones.md) | 사용 중인 backbone과 external whole-model 가중치의 파일 정보, URL과 SHA-256 |
 | reference | [glossary.md](glossary.md) | geometry, data, model assembly, training, evaluation, output 용어 연결 |
 
 reference는 특정 model 문서의 반복을 줄이고 여러 model에 공통으로 적용되는 계산 기준을 제공한다.
@@ -117,7 +118,7 @@ CLI는 `--model`로 표현 package를, `--network` 또는 `--net`으로 backbone
 model별 variant를 선택한다. 기본 output path는 다음 규칙이다.
 
 ```text
-outputs/<dataset>/<model>/<network_head>/<exp_name>/
+outputs/<dataset>/<model>/<exp_name>/
 ```
 
 current project 동작과 문서가 충돌하면 source implementation을 확인한 뒤 canonical 문서를 같은 작업에서
@@ -155,7 +156,8 @@ docs/
 ├── plans/
 ├── reference/
 │   ├── 01-losses.md
-│   └── 02-metrics.md
+│   ├── 02-metrics.md
+│   └── 03-backbones.md
 ├── glossary.md
 └── README.md
 ```

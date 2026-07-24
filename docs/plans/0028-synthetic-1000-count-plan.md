@@ -51,4 +51,4 @@
 - `data/make_synthetic_images.py` 실행 로그에서 세 폴더 각각 `validated_pairs=100`을 확인한다.
 - `data/make_gt_corners.py` 실행 후 `data/synthetic/gt_corners.csv`의 행 수가 300행(header 제외)인지
   확인한다.
-- `conda activate pytorch_env` 환경에서 실행하며, ver3 project root에서 실행한다.
+- `conda activate pytorch_env` 환경에서 실행하며, project root에서 실행한다.

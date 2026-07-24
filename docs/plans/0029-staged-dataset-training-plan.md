@@ -76,11 +76,11 @@
 
 ## 4. 검증
 
-conda 환경 `pytorch_env`에서 ver3 project root 기준으로 실행한다.
+conda 환경 `pytorch_env`에서 project root 기준으로 실행한다.
 
 - import 확인:
   ```
-  PYTHONPATH=<ver3 root> python -c "import scripts.config, scripts.train, scripts.evaluate, scripts.predict"
+  PYTHONPATH=<project-root> python -c "import scripts.config, scripts.train, scripts.evaluate, scripts.predict"
   ```
 - `argparse.Namespace`로 만든 가짜 config에 대한 경로 파생 확인:
   - `dataset=public`이면 `get_prev_checkpoint_path`가 `None`을 반환한다.

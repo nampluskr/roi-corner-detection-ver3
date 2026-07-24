@@ -47,7 +47,7 @@
 | `experiments/__init__.py` | (없음) | `experiments/` 폴더 제거로 불필요 |
 
 `scripts/`는 그대로 두고, `experiments/`의 두 파일만 파일명을 바꿔 같은 `scripts/`에 병합하는
-구조다. 병합 후 ver3 `scripts/` 폴더는 다음과 같다.
+구조다. 병합 후 현재 project `scripts/` 폴더는 다음과 같다.
 
 ```text
 scripts/

@@ -7,7 +7,7 @@
 이 프로젝트는 ROI corner detection을 위한 독립 workspace다. 구속력 있는 기준은 현재 repository의
 문서와 구현 결과로 확립한다.
 
-현재 ver3의 문서 기준은 다음과 같다.
+현재 project의 문서 기준은 다음과 같다.
 
 | 문서 | 상태 | 역할 |
 | --- | --- | --- |
@@ -18,18 +18,18 @@
 ## 2. 작업 범위와 산출물
 
 구현과 문서는 현재 workspace에 존재하는 범위에서 작업한다. 새 data, src, experiments 또는 outputs
-folder는 사용자 요청 또는 ver3 plan의 구현 단계가 없으면 만들지 않는다.
+folder는 사용자 요청 또는 승인된 plan의 구현 단계가 없으면 만들지 않는다.
 
-실험 산출물 경로는 현재 ver3의 `model`/`network` CLI 기준을 따른다.
+실험 산출물 경로는 현재 project의 `model`/`network` CLI 기준을 따른다.
 
 ```text
-outputs/<dataset>/<model>/<network_head>/<exp_name>/
+outputs/<dataset>/<model>/<exp_name>/
 ```
 
 `dataset`은 `public`, `synthetic`, `measured`의 논리 stage다. `model`은 `reg`, `seg`, `det`,
 `peak`, `ridge`, `gcn`, `hybrid`, `torchseg`, `torchdet`, `yolo`, `detr` 중 하나를 선택한다.
 architecture 또는 외부 whole-model 이름은 `--network` 또는 `--net`으로 지정하고, model별 head
-옵션은 `--head`로 지정한다.
+옵션은 `--head`로 지정한다. `exp_name`은 `<model>_<network>_<head>_<dataset>` 형식이다.
 
 ## 3. 문서 작성 규칙
 
@@ -75,27 +75,27 @@ if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 ```
 
-현재 ver3 project root의 절대 경로는 다음과 같다.
+현재 project root는 이 repository root다.
 
 ```text
-/mnt/d/projects/nampluskr/00_review/260720_roi-corner-detection-ver3
+<project-root>
 ```
 
 ## 5. 실행 환경과 Python 경로
 
 Python 실행과 검증은 conda 환경 `pytorch_env`를 사용한다. 코드 실행, `python -c` 검증,
-스크립트 실행 전에 먼저 이 환경을 활성화하고 ver3 project root에서 실행한다.
+스크립트 실행 전에 먼저 이 환경을 활성화하고 project root에서 실행한다.
 
 ```bash
 conda activate pytorch_env
-cd /mnt/d/projects/nampluskr/00_review/260720_roi-corner-detection-ver3
+cd <project-root>
 ```
 
-일회성 import 검증처럼 script의 `sys.path` 보정이 적용되지 않는 명령에서는 `PYTHONPATH`에 ver3
+일회성 import 검증처럼 script의 `sys.path` 보정이 적용되지 않는 명령에서는 `PYTHONPATH`에
 project root를 포함한다.
 
 ```bash
-PYTHONPATH=/mnt/d/projects/nampluskr/00_review/260720_roi-corner-detection-ver3 python -c "import src"
+PYTHONPATH=<project-root> python -c "import src"
 ```
 
 ## 6. Plan 문서 규칙

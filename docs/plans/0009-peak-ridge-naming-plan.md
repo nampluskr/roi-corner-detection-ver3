@@ -2,7 +2,7 @@
 상태: Done
 작성일: 2026-07-21
 완료일: 2026-07-21
-적용 범위: ver3 `src/methods/heatmap/` → `src/methods/peak/`, `src/methods/linemap/` → `src/methods/ridge/`, `src/components/heads.py`, `src/core/factory.py`, `scripts/config.py`, `scripts/batch_config.py`
+적용 범위: `src/methods/heatmap/` → `src/methods/peak/`, `src/methods/linemap/` → `src/methods/ridge/`, `src/components/heads.py`, `src/core/factory.py`, `scripts/config.py`, `scripts/batch_config.py`
 관련 문서: [../README.md](../README.md), [../CLAUDE.md](../CLAUDE.md), [0005-methods-restructure-plan.md](0005-methods-restructure-plan.md), [0006-heatmap-postprocessor-argmax-plan.md](0006-heatmap-postprocessor-argmax-plan.md), [0008-ridge-method-plan.md](0008-ridge-method-plan.md), [0010-method-to-model-and-network-arg-plan.md](0010-method-to-model-and-network-arg-plan.md)
 ---
 

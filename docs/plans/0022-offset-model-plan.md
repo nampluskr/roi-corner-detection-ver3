@@ -86,31 +86,31 @@ smooth L1인 `OffsetSmoothL1Loss(BaseLoss)`를 정의하여 공용 component를 
 
 다음을 모두 충족하면 이 plan을 Done으로 본다.
 
-- `src/models/offset/`의 다섯 파일이 ver3 code 규칙을 따르며 존재한다.
+- `src/models/offset/`의 다섯 파일이 project code 규칙을 따르며 존재한다.
 - `--model offset`이 factory에서 `OffsetWrapper`로 dispatch된다.
 - canonical 문서와 slides가 offset을 반영하고 model 개수 표기가 12로 갱신된다.
 - 아래 검증의 import 확인, factory dispatch 확인, smoke train run이 통과한다.
 
 ## 5. 검증
 
-`pytorch_env`에서 ver3 root로 이동해 실행한다.
+`pytorch_env`에서 project root로 이동해 실행한다.
 
 ```bash
 conda activate pytorch_env
-cd /mnt/d/projects/nampluskr/00_review/260720_roi-corner-detection-ver3
+cd <project-root>
 ```
 
 import 확인:
 
 ```bash
-PYTHONPATH=/mnt/d/projects/nampluskr/00_review/260720_roi-corner-detection-ver3 \
+PYTHONPATH=<project-root> \
   python -c "from src.models.offset.wrapper import OffsetWrapper; print('ok')"
 ```
 
 factory dispatch 확인:
 
 ```bash
-PYTHONPATH=/mnt/d/projects/nampluskr/00_review/260720_roi-corner-detection-ver3 \
+PYTHONPATH=<project-root> \
   python -c "from src.core.factory import get_wrapper; w=get_wrapper('offset', network='custom', head='spatial', warmup_epochs=0); print(type(w).__name__)"
 ```
 

@@ -40,6 +40,6 @@
 
 ## 검증
 
-`PYTHONPATH`에 ver3 project root를 포함해 `RidgeWrapper(head="pcaline")` 생성과
+`PYTHONPATH`에 project root를 포함해 `RidgeWrapper(head="pcaline")` 생성과
 `RidgeWrapper(head="ridge")`가 `ValueError`를 내는지 확인한다. 문서 변경은 grep으로 잔여
 `--head ridge` 문자열이 없는지 확인한다.

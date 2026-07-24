@@ -123,7 +123,7 @@ from src.components.metrics import SuccessRate
   모든 최상위 정의/상수를 담을 것 — 충족
 - 병합 파일 내 intra import가 남아있지 않고, cross import는 전부 `src.components.*` 경로일 것 — 충족
 - `src/core/evaluator.py`가 `src.components.metrics`를 참조할 것 — 충족
-- ver3에 `src/losses/`, `src/metrics/`, `src/models/`(building-block 부분)는 새로 만들지 않을 것 — 충족
+- 현재 project에 `src/losses/`, `src/metrics/`, `src/models/`(building-block 부분)는 새로 만들지 않을 것 — 충족
 
 ## 8. 검증
 
@@ -133,7 +133,7 @@ from src.components.metrics import SuccessRate
 - **import 스모크**:
   ```bash
   conda activate pytorch_env
-  cd <ver3>
+  cd <project-root>
   python -c "from src.components import losses, metrics, blocks, features"   # OK
   python -c "from src.components import backbones, adapters, necks, heads"    # OK (timm/torchvision 로드)
   python -c "import src.core.evaluator"                                       # OK (metrics 경로 갱신 확인)

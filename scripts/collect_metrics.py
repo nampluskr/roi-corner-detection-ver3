@@ -16,17 +16,16 @@ DEFAULT_OUTPUTS = os.path.join(PROJECT_ROOT, "outputs")
 
 
 def parse_identity(metrics_path, outputs_dir):
-    """Return dataset, model, network_head, exp_name parsed from a metrics.json path."""
+    """Return dataset, model, and exp_name parsed from a metrics.json path."""
     exp_dir = os.path.dirname(metrics_path)
     rel = os.path.relpath(exp_dir, outputs_dir)
     parts = rel.split(os.sep)
-    if len(parts) != 4:
+    if len(parts) != 3:
         return None
-    dataset, model, network_head, exp_name = parts
+    dataset, model, exp_name = parts
     return {
         "dataset": dataset,
         "model": model,
-        "network_head": network_head,
         "exp_name": exp_name,
     }
 
@@ -67,7 +66,7 @@ def main():
         return
 
     frame = pd.DataFrame(rows)
-    lead = ["dataset", "model", "network_head", "exp_name"]
+    lead = ["dataset", "model", "exp_name"]
     metric_cols = [c for c in frame.columns if c not in lead]
     frame = frame[lead + sorted(metric_cols)]
     frame = frame.sort_values(lead).reset_index(drop=True)

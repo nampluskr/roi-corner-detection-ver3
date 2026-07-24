@@ -2,13 +2,13 @@
 상태: Done
 작성일: 2026-07-22
 완료일: 2026-07-22
-적용 범위: ver3 `docs/` canonical 문서 체계
+적용 범위: `docs/` canonical 문서 체계
 관련 문서: [../README.md](../README.md), [../../README.md](../../README.md)
 ---
 
 ## 목적과 배경
 
-ver3의 1차 재구성 구현은 완료되었으며, 현재 `README.md`와 `docs/README.md`는 프로젝트 현황과
+현재 project의 1차 재구성 구현은 완료되었으며, 현재 `README.md`와 `docs/README.md`는 프로젝트 현황과
 문서 운영 절차를 제공한다. 그러나 model 조립 계약, 데이터 인터페이스, 학습 및 추론 흐름, model별
 구현 선택 기준은 아직 개별 canonical 문서로 정리되지 않았다.
 

@@ -2,7 +2,7 @@
 상태: Done
 작성일: 2026-07-21
 완료일: 2026-07-21
-적용 범위: ver3 `src/models/hybrid/model.py`, `src/models/hybrid/preprocessor.py`, `src/models/hybrid/postprocessor.py`, `src/models/hybrid/wrapper.py`, `src/models/hybrid/__init__.py`, `src/core/factory.py`(dispatch 추가), `scripts/config.py`·`scripts/batch_config.py`(model 목록 추가)
+적용 범위: `src/models/hybrid/model.py`, `src/models/hybrid/preprocessor.py`, `src/models/hybrid/postprocessor.py`, `src/models/hybrid/wrapper.py`, `src/models/hybrid/__init__.py`, `src/core/factory.py`(dispatch 추가), `scripts/config.py`·`scripts/batch_config.py`(model 목록 추가)
 관련 문서: [../README.md](../README.md), [../CLAUDE.md](../CLAUDE.md), [0005-methods-restructure-plan.md](0005-methods-restructure-plan.md), [0008-ridge-method-plan.md](0008-ridge-method-plan.md), [0009-peak-ridge-naming-plan.md](0009-peak-ridge-naming-plan.md), [0010-method-to-model-and-network-arg-plan.md](0010-method-to-model-and-network-arg-plan.md), [0011-gcn-method-plan.md](0011-gcn-method-plan.md), [DL + Classical CV Hybrid 방법론 문서](https://github.com/nampluskr/roi-corner-detection/blob/main/docs/models/05_dl-classical-cv-hybrid.md)
 ---
 
@@ -29,7 +29,7 @@ cornerSubPix 창 크기 등)의 도메인 튜닝이 필요하다는 점이다.
 
 상세 이론(depthwise separable convolution, MobileNetV3 SE/hard-swish, U-Net skip, BCE+Dice
 손실, Canny/Hough/cornerSubPix 수식, 3단계 학습 전략, F1-F8 제약 대응)은 위 "관련 문서"의 DL +
-Classical CV Hybrid 방법론 문서를 따른다. 이 플랜은 그 이론을 ver3 코드 구조에 매핑하는 설계를
+Classical CV Hybrid 방법론 문서를 따른다. 이 플랜은 그 이론을 현재 project 코드 구조에 매핑하는 설계를
 확정한다.
 
 ## 전제: 디렉터리 경로

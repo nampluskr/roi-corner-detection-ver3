@@ -14,7 +14,7 @@ from src.components.metrics import PolygonIoU
 class RegWrapper(BaseWrapper):
     """Wraps RegModel training/evaluation/inference behind the shared Trainer/Evaluator/Predictor interface."""
 
-    def __init__(self, in_channels=3, dropout=0.2, network="custom", head="gap",
+    def __init__(self, in_channels=3, dropout=0.2, network="custom", head="spatial",
                  optimizer=None, scheduler=None, preprocessor=None, postprocessor=None,
                  losses=None, metrics=None, device=None, warmup_epochs=1):
         model = RegModel(in_channels=in_channels, network=network, dropout=dropout, head=head)

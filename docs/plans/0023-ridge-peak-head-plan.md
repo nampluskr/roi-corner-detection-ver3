@@ -100,7 +100,7 @@ preprocessor, loss, metric, optimizer, scheduler 구성은 그대로 둔다. mod
 
 ## 5. 검증
 
-conda 환경 `pytorch_env`를 활성화하고 ver3 root에서 실행한다. import 확인, head dispatch 확인,
+conda 환경 `pytorch_env`를 활성화하고 project root에서 실행한다. import 확인, head dispatch 확인,
 `--head peakprod`와 `--head ridge` 두 head의 smoke train run을 각각 수행한다. loss와 IoU가 finite이고
 각 output 디렉토리에 `history.json`, `model.pth`, `run.log`가 생성되면 통과로 본다. peakprod의
 곱-map argmax가 corner를 degenerate하게 반환하면 곱 전 per-channel threshold를 추가하고 재검증한다.

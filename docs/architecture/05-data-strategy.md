@@ -51,9 +51,9 @@ flowchart LR
 ```
 
 현재 CLI의 `--dataset`은 이 세 단계의 logical stage 이름과 같다. `--dataset`은 output path의 논리
-구분자로 쓰이며 `outputs/<dataset>/<model>/<network_head>/<exp_name>/` 경로의 첫 segment가 된다. 즉
-data 전략의 단계 이름이 실험 산출물 경로에 그대로 남는다. `--dataset` 자체가 특정 CSV를 자동으로
-선택하지는 않으며, 실제 data는 `--csv_path`로 지정한다.
+구분자로 쓰이며 `outputs/<dataset>/<model>/<exp_name>/` 경로의 첫 segment와 `exp_name`의 마지막
+segment가 된다. 즉 data 전략의 단계 이름이 실험 산출물 경로에 그대로 남는다. `--dataset` 자체가 특정
+CSV를 자동으로 선택하지는 않으며, 실제 data는 `--csv_path`로 지정한다.
 
 ## 3. 단계별 data 특성
 
@@ -65,7 +65,7 @@ public 단계는 표본 수가 많고 물체 종류가 다양하지만 검사 do
 
 public 단계의 대표 dataset은 SmartDoc과 MIDV2020이다. SmartDoc은 촬영된 문서 image에서 document
 quadrilateral의 네 corner를 제공하고, MIDV2020은 카드와 ID 문서 image에서
-대상 문서의 네 corner를 제공한다. 두 dataset은 원본 annotation 형식이 다르더라도 ver3에서 사용할 때는
+대상 문서의 네 corner를 제공한다. 두 dataset은 원본 annotation 형식이 다르더라도 현재 project에서 사용할 때는
 `gt_corners.csv`의 normalized `[0, 1]` 좌표와 `TL`, `TR`, `BR`, `BL` 순서로 맞춘다. 즉 public 단계의
 역할은 특정 검사 texture를 학습하는 것이 아니라, 다양한 촬영 배경과 원근 조건에서 사각형 ROI의 네 점을
 안정적으로 찾는 일반 능력을 먼저 확보하는 것이다.
@@ -249,10 +249,10 @@ weight를 자동으로 이어받는 staged 학습을 지원한다.
 `scripts/train.py`는 학습 시작 전에 현재 `--dataset`의 이전 단계 output 경로에 있는 `model.pth`를 찾아
 있으면 model weight를 그대로 불러온다. 단계 선후 관계는 `synthetic`의 이전 단계가 `public`, `measured`의
 이전 단계가 `synthetic`이다. `public` 단계처럼 이전 단계가 없거나 이전 단계 `model.pth`가 아직 없으면
-backbone init 상태에서 처음부터 학습하며 그 사실을 log에 남긴다. 이전 단계 checkpoint 경로는 network와
-head, experiment 이름이 같은 실험을 기준으로 결정되므로, 세 단계를 같은 model과 network 조합으로 이어
-학습할 때 weight가 자연스럽게 carryover된다. 단계마다 learning rate를 줄이는 스케줄은 여전히 개념
-설계이며 자동 적용되지 않는다.
+backbone init 상태에서 처음부터 학습하며 그 사실을 log에 남긴다. 이전 단계 checkpoint 경로는 같은 model,
+network, head 조합과 이전 stage 이름을 담은 experiment 이름을 기준으로 결정되므로, 세 단계를 같은 model과
+network 조합으로 이어 학습할 때 weight가 자연스럽게 carryover된다. 단계마다 learning rate를 줄이는
+스케줄은 여전히 개념 설계이며 자동 적용되지 않는다.
 
 현재 지원 여부는 다음과 같이 구분한다.
 
